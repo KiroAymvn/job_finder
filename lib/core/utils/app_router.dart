@@ -1,7 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-import 'package:job_finder/root.dart';
 
 import '../../features/onboarding/presentation/screen/splash_screen.dart';
 
@@ -16,7 +15,7 @@ abstract class AppRouter {
         path: kSplash,
         builder:
             (BuildContext context, GoRouterState state) {
-          return  Root();
+          return  SplashScreen();
         },
       ),
 

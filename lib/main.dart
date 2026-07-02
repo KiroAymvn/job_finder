@@ -6,7 +6,8 @@ import 'package:job_finder/core/utils/app_router.dart';
 
 void main() => runApp(
   DevicePreview(
-    enabled: !kReleaseMode,
+    enabled: false,
+
     builder: (context) => MyApp(), // Wrap your app
   ),
 );
@@ -17,12 +18,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return ScreenUtilInit(
       designSize: const  Size(375, 812) ,
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp.router(
+          locale: DevicePreview.locale(context),
+          builder: DevicePreview.appBuilder,
           debugShowCheckedModeBanner: false,
           routerConfig: AppRouter.router,
         );
