@@ -4,7 +4,6 @@ import 'package:job_finder/core/utils/app_colors.dart';
 import 'package:job_finder/core/utils/images.dart';
 import 'package:job_finder/features/auth/presentation/screen/register_screen.dart';
 
-import 'onBSCreen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
