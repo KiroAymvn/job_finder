@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // استخدمنا المكتبة هنا
 import 'package:job_finder/core/utils/app_colors.dart';
 import 'package:job_finder/core/utils/images.dart';
+import 'package:job_finder/features/auth/presentation/screen/register_screen.dart';
 
 import 'onBSCreen.dart';
 
@@ -32,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const Onbscreen(),
+          builder: (context) => const RegisterScreen(),
         ),
       );
     }
