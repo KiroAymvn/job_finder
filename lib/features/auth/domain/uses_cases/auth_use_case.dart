@@ -9,7 +9,7 @@ class RegisterUseCase{
 
   RegisterUseCase({required this.authRepo});
 
-  Future<Either<Failure,UserEntity>>call({required RegisterParams registerParams}){
-    return authRepo.register(registerParams: registerParams);
+  Future<Either<Failure,UserEntity>>call({required RegisterParams registerParams})async{
+    return await authRepo.register(registerParams: registerParams);
   }
 }
