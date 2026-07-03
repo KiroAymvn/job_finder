@@ -25,7 +25,7 @@ abstract class AppRouter {
         },
       ),
       GoRoute(
-        path: kRegister,
+        path: kLogin,
         builder: (BuildContext context, GoRouterState state) {
           return const LoginScreen();
         },
