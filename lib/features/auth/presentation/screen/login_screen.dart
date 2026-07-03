@@ -12,6 +12,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/images.dart';
 import '../../../../core/utils/text_styles.dart';
+import '../../../shared/custom_button.dart';
 import '../widget/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,9 +24,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController passwordController =
-  TextEditingController();
+      TextEditingController();
 
   bool isRememberMe = false; // State for the checkbox
 
@@ -68,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: Column(
                   crossAxisAlignment:
-                  CrossAxisAlignment.center,
+                      CrossAxisAlignment.center,
                   children: [
                     Gap(AppSpaces.largeH * 1.5),
 
@@ -93,8 +94,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             text: 'NextStep',
                             style: Styles.largeTitle
                                 ?.copyWith(
-                              color: AppColors.kPrimary,
-                            ),
+                                  color: AppColors.kPrimary,
+                                ),
                           ),
                         ],
                       ),
@@ -116,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: emailController,
                       label: 'Email',
                       keyboardType:
-                      TextInputType.emailAddress,
+                          TextInputType.emailAddress,
                     ),
                     CustomTextField(
                       controller: passwordController,
@@ -160,9 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             activeColor: AppColors.kPrimary,
                             shape: RoundedRectangleBorder(
                               borderRadius:
-                              BorderRadius.circular(
-                                4.r,
-                              ),
+                                  BorderRadius.circular(
+                                    4.r,
+                                  ),
                             ),
                           ),
                         ),
@@ -182,8 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Forgot Password ?',
                             style: Styles.smallTitle
                                 ?.copyWith(
-                              color: AppColors.kPrimary,
-                            ),
+                                  color: AppColors.kPrimary,
+                                ),
                           ),
                         ),
                       ],
@@ -192,34 +193,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     Gap(AppSpaces.mediumH),
 
                     // 6. Login Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52.h,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          LoginParams loginParams = LoginParams(
-                              email: "johnn.doe@example.com",
-                              password: "password123");
-                          context
-                              .read<AuthCubit>()
-                              .loginFaileOrSuccess(
-                            loginParams: loginParams,
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                          AppColors.kPrimary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(10.r),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          'Login',
-                          style: Styles.buttonText,
-                        ),
-                      ),
+                    CustomButton(
+                      onPressed: () {
+                        LoginParams loginParams =
+                            LoginParams(
+                              email:
+                                  "johnn.doe@example.com",
+                              password: "password123",
+                            );
+                        context
+                            .read<AuthCubit>()
+                            .loginFaileOrSuccess(
+                              loginParams: loginParams,
+                            );
+                      },
+                      text: "login",
                     ),
 
                     SizedBox(height: 24.h),
@@ -227,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // 7. Footer (Sign Up navigation)
                     Row(
                       mainAxisAlignment:
-                      MainAxisAlignment.center,
+                          MainAxisAlignment.center,
                       children: [
                         Text(
                           "Don't have an account? ",
@@ -245,8 +233,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Sign Up',
                             style: Styles.smallTitle
                                 ?.copyWith(
-                              color: AppColors.kPrimary,
-                            ),
+                                  color: AppColors.kPrimary,
+                                ),
                           ),
                         ),
                       ],

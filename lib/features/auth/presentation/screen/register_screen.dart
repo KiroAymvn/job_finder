@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:job_finder/core/params/auth_params.dart';
 import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:job_finder/features/shared/custom_button.dart';
 import 'package:job_finder/features/shared/scaffold_message.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/utils/app_colors.dart';
@@ -144,44 +145,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Gap(AppSpaces.mediumH),
 
                     // 5. Register Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52.h,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          RegisterParams registerParams =
-                              RegisterParams(
-                                email: "testss5@gmail.com",
-                                password: "123456",
-                                fullName: "test",
-                                phoneNumber:
-                                    "+201598843214",
-                                address: "cairo",
-                                gender: "MAN",
-                                role: "USER",
-                              );
+                    CustomButton(
+                      onPressed: () {
+                        RegisterParams registerParams =
+                            RegisterParams(
+                              email: "testss5@gmail.com",
+                              password: "123456",
+                              fullName: "test",
+                              phoneNumber: "+201598843214",
+                              address: "cairo",
+                              gender: "MAN",
+                              role: "USER",
+                            );
 
-                          context
-                              .read<AuthCubit>()
-                              .registerEitherFailureOrUser(
-                                registerParams:
-                                    registerParams,
-                              );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors
-                              .kPrimary, //[cite: 2]
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(10.r),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          'Register',
-                          style: Styles.buttonText, //
-                        ),
-                      ),
+                        context
+                            .read<AuthCubit>()
+                            .registerEitherFailureOrUser(
+                              registerParams:
+                                  registerParams,
+                            );
+                      },
+                      text: "Register",
                     ),
 
                     SizedBox(height: 24.h),
@@ -199,7 +183,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            GoRouter.of(context).pushReplacement("/login");
+                            GoRouter.of(
+                              context,
+                            ).pushReplacement("/login");
                           },
                           child: Text(
                             'Login',
