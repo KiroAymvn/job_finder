@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:job_finder/core/params/auth_params.dart';
 import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:job_finder/features/shared/scaffold_message.dart';
@@ -21,8 +22,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController =
+  TextEditingController();
+  final TextEditingController passwordController =
+  TextEditingController();
 
   bool isRememberMe = false; // State for the checkbox
 
@@ -64,7 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   horizontal: AppSpaces.largeW,
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment:
+                  CrossAxisAlignment.center,
                   children: [
                     Gap(AppSpaces.largeH * 1.5),
 
@@ -87,7 +91,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextSpan(
                             text: 'NextStep',
-                            style: Styles.largeTitle?.copyWith(
+                            style: Styles.largeTitle
+                                ?.copyWith(
                               color: AppColors.kPrimary,
                             ),
                           ),
@@ -110,7 +115,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     CustomTextField(
                       controller: emailController,
                       label: 'Email',
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType:
+                      TextInputType.emailAddress,
                     ),
                     CustomTextField(
                       controller: passwordController,
@@ -122,11 +128,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: EdgeInsets.only(top: 4.h, bottom: 8.h),
+                        padding: EdgeInsets.only(
+                          top: 4.h,
+                          bottom: 8.h,
+                        ),
                         child: Text(
                           'Password must be at least 8 characters long',
                           style: Styles.body?.copyWith(
-                            color: AppColors.kGrey99, // Assuming a grey color exists
+                            color: AppColors.kGrey99,
+                            // Assuming a grey color exists
                             fontSize: 12.sp,
                           ),
                         ),
@@ -143,12 +153,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             value: isRememberMe,
                             onChanged: (value) {
                               setState(() {
-                                isRememberMe = value ?? false;
+                                isRememberMe =
+                                    value ?? false;
                               });
                             },
                             activeColor: AppColors.kPrimary,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.r),
+                              borderRadius:
+                              BorderRadius.circular(
+                                4.r,
+                              ),
                             ),
                           ),
                         ),
@@ -166,7 +180,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child: Text(
                             'Forgot Password ?',
-                            style: Styles.smallTitle?.copyWith(
+                            style: Styles.smallTitle
+                                ?.copyWith(
                               color: AppColors.kPrimary,
                             ),
                           ),
@@ -182,12 +197,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 52.h,
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: Call context.read<AuthCubit>().login(...) here
+                          LoginParams loginParams = LoginParams(
+                              email: "johnn.doe@example.com",
+                              password: "password123");
+                          context
+                              .read<AuthCubit>()
+                              .loginFaileOrSuccess(
+                            loginParams: loginParams,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.kPrimary,
+                          backgroundColor:
+                          AppColors.kPrimary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
+                            borderRadius:
+                            BorderRadius.circular(10.r),
                           ),
                           elevation: 0,
                         ),
@@ -202,7 +226,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // 7. Footer (Sign Up navigation)
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment:
+                      MainAxisAlignment.center,
                       children: [
                         Text(
                           "Don't have an account? ",
@@ -212,11 +237,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            GoRouter.of(context).pushReplacement("/register");
+                            GoRouter.of(
+                              context,
+                            ).pushReplacement("/register");
                           },
                           child: Text(
                             'Sign Up',
-                            style: Styles.smallTitle?.copyWith(
+                            style: Styles.smallTitle
+                                ?.copyWith(
                               color: AppColors.kPrimary,
                             ),
                           ),

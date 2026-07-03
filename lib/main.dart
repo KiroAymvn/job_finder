@@ -3,18 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // 1. Import flutter_bloc
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:job_finder/core/utils/app_router.dart';
+import 'package:job_finder/core/utils/secure_storage_helper.dart';
 
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 // 2. Import your AuthCubit here (تأكد من مسار الملف الصحيح)
 // import 'package:job_finder/features/auth/presentation/cubit/auth_cubit.dart';
 
-void main() => runApp(
+void main() async{
+
+
+
+  runApp(
   DevicePreview(
     enabled: false,
     builder: (context) => const MyApp(),
   ),
 );
-
+}
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

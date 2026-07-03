@@ -4,12 +4,28 @@ import 'package:job_finder/core/params/auth_params.dart';
 import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
 import 'package:job_finder/features/auth/domain/repo/auth_repo.dart';
 
-class RegisterUseCase{
+class RegisterUseCase {
   final AuthRepo authRepo;
 
   RegisterUseCase({required this.authRepo});
 
-  Future<Either<Failure,UserEntity>>call({required RegisterParams registerParams})async{
-    return await authRepo.register(registerParams: registerParams);
+  Future<Either<Failure, UserEntity>> call({
+    required RegisterParams registerParams,
+  }) async {
+    return await authRepo.register(
+      registerParams: registerParams,
+    );
+  }
+}
+
+class LoginUserCase {
+  final AuthRepo authRepo;
+
+  LoginUserCase({required this.authRepo});
+
+  Future<Either<Failure, UserEntity>> call({
+    required LoginParams loginParams,
+  }) async {
+    return await authRepo.login(loginParams: loginParams);
   }
 }

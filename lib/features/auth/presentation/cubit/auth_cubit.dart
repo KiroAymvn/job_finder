@@ -14,13 +14,6 @@ part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
-bool loginViewPassword =false;
-  void toggleLoginPass(){
-     loginViewPassword=!loginViewPassword;
-  }
-
-
-
 
   Future<void> registerEitherFailureOrUser({
     required RegisterParams registerParams,
@@ -33,8 +26,34 @@ bool loginViewPassword =false;
         ),
       ),
     ).call(registerParams: registerParams);
-    failureOrUser.fold((failure) {
-      emit(AuthFailed(errorMessage: failure.errMessage));
-    }, (user){emit(AuthSuccess(userEntity: user));});
+    failureOrUser.fold(
+      (failure) {
+        emit(AuthFailed(errorMessage: failure.errMessage));
+      },
+      (user) {
+        emit(AuthSuccess(userEntity: user));
+      },
+    );
+  }
+
+  Future<void> loginFaileOrSuccess({
+    required LoginParams loginParams,
+  }) async {
+    emit(AuthLoading());
+    final failOrUser = await LoginUserCase(
+      authRepo: AuthRepoImpl(
+        remoteDataSource: RemoteDataSource(
+          api: DioConsumer(dio: Dio()),
+        ),
+      ),
+    ).call(loginParams: loginParams);
+    failOrUser.fold(
+      (failure) {
+        emit(AuthFailed(errorMessage: failure.errMessage));
+      },
+      (user) {
+        emit(AuthSuccess(userEntity: user));
+      },
+    );
   }
 }

@@ -1,7 +1,9 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:job_finder/core/database/api/api_consumer.dart';
 import 'package:job_finder/core/database/api/dio_consumer.dart';
 import 'package:job_finder/core/database/api/end_points.dart';
 import 'package:job_finder/core/params/auth_params.dart';
+import 'package:job_finder/core/utils/secure_storage_helper.dart';
 import 'package:job_finder/features/auth/data/models/user_model.dart';
 import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
 
@@ -29,6 +31,8 @@ class RemoteDataSource {
     final UserModel userModel = UserModel.fromJson(
       response,
     );
+    final secure=await SecureStorageHelper.getInstance();
+    secure?.assignData(key: "token", value: userModel.dataEntity.token);
     return userModel;
   }
 
@@ -36,7 +40,7 @@ class RemoteDataSource {
     required LoginParams loginParams,
   }) async {
     final response = await api.post(
-      AppEndPoint.register,
+      AppEndPoint.login,
       data: {
         "email": loginParams.email,
         "password": loginParams.password,
@@ -45,5 +49,7 @@ class RemoteDataSource {
     final UserModel userModel = UserModel.fromJson(
       response,
     );
+    final secure=await SecureStorageHelper.getInstance();
+    secure?.assignData(key: "token", value: userModel.dataEntity.token);
     return userModel;
   }}
