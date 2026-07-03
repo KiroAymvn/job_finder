@@ -5,8 +5,8 @@ abstract class AuthParams {
   AuthParams({required this.email, required this.password});
 }
 
-class loginParams extends AuthParams {
-  loginParams({
+class LoginParams extends AuthParams {
+  LoginParams({
     required super.email,
     required super.password,
   });

@@ -9,44 +9,77 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final bool isPassword;
   final TextInputType keyboardType;
-TextEditingController controller = TextEditingController();
-   CustomTextField({
+  final TextEditingController controller;
+
+  // 1. تعريف ValueNotifier داخل الـ StatelessWidget
+  late final ValueNotifier<bool> isObscureNotifier;
+
+  CustomTextField({
     super.key,
     required this.label,
-     required this.controller,
+    required this.controller,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
-  });
+  }) {
+    // 2. إعطاء القيمة الابتدائية بناءً على نوع الحقل (كلمة مرور أم لا)
+    isObscureNotifier = ValueNotifier<bool>(isPassword);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 16.h), // مسافة ثابتة بين الحقول
-      child: TextFormField(
-        controller: controller,
-        obscureText: isPassword,
-        keyboardType: keyboardType,
-        style: Styles.smallTitle, // لون النص المدخل أسود كما في التصميم
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: Styles.body?.copyWith(color: AppColors.kPrimary,fontWeight: FontWeight.bold), // لون الـ Label أخضر[cite: 2]
-          hintStyle: Styles.smallTitle, // جعلنا الـ hint يشبه النص المدخل ليطابق الصورة
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.only(bottom: 16.h),
 
-          // إعدادات الحدود (Borders)
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
-            borderSide: const BorderSide(color: AppColors.kPrimary, width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
-            borderSide: const BorderSide(color: AppColors.kPrimary, width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
-            borderSide: const BorderSide(color: AppColors.kPrimary, width: 1.5),
-          ),
-        ),
+      // 3. تغليف TextFormField بـ ValueListenableBuilder فقط
+      child: ValueListenableBuilder<bool>(
+        valueListenable: isObscureNotifier,
+        builder: (context, isObscure, child) {
+          return TextFormField(
+            controller: controller,
+            obscureText: isObscure, // الاعتماد على قيمة الـ ValueNotifier
+            keyboardType: keyboardType,
+            style: Styles.smallTitle,
+            decoration: InputDecoration(
+              labelText: label,
+              labelStyle: Styles.body?.copyWith(
+                color: AppColors.kPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+              hintStyle: Styles.smallTitle,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
+
+              // 4. تحديث الأيقونة وتغيير القيمة بدون setState
+              suffixIcon: isPassword
+                  ? IconButton(
+                onPressed: () {
+                  // عكس القيمة الحالية مباشرة
+                  isObscureNotifier.value = !isObscureNotifier.value;
+                },
+                icon: Icon(
+                  isObscure ? CupertinoIcons.eye_slash : CupertinoIcons.eye,
+                  color: AppColors.kPrimary,
+                ),
+              )
+                  : null,
+
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+                borderSide: const BorderSide(color: AppColors.kPrimary, width: 1),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+                borderSide: const BorderSide(color: AppColors.kPrimary, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+                borderSide: const BorderSide(color: AppColors.kPrimary, width: 1.5),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

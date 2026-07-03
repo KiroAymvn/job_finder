@@ -26,9 +26,24 @@ class RemoteDataSource {
       },
     );
 
-    final UserModel userEntity = UserModel.fromJson(
+    final UserModel userModel = UserModel.fromJson(
       response,
     );
-    return userEntity;
+    return userModel;
   }
-}
+
+  Future<UserEntity?> login({
+    required LoginParams loginParams,
+  }) async {
+    final response = await api.post(
+      AppEndPoint.register,
+      data: {
+        "email": loginParams.email,
+        "password": loginParams.password,
+      },
+    );
+    final UserModel userModel = UserModel.fromJson(
+      response,
+    );
+    return userModel;
+  }}

@@ -21,11 +21,33 @@ class AuthRepoImpl implements AuthRepo {
       final userEntity = await remoteDataSource.register(
         registerParams: registerParams,
       );
-      final secureStorage=await SecureStorageHelper.getInstance();
-      secureStorage?.assignData(key: "token", value: userEntity!.dataEntity.token);
+      final secureStorage =
+          await SecureStorageHelper.getInstance();
+      secureStorage?.assignData(
+        key: "token",
+        value: userEntity!.dataEntity.token,
+      );
       return right(userEntity!);
     } on ServerException catch (e) {
-      return left(Failure(errMessage: e.errorModel.errorMessage));
+      return left(
+        Failure(errMessage: e.errorModel.errorMessage),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> login({
+    required LoginParams loginParams,
+  }) async {
+    try {
+      final UserEntity? userEntity = await remoteDataSource
+          .login(loginParams: loginParams);
+
+      return right(userEntity!);
+    } on ServerException catch (e) {
+      return left(
+        Failure(errMessage: e.errorModel.errorMessage),
+      );
     }
   }
 }

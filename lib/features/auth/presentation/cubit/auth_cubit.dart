@@ -14,6 +14,13 @@ part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
+bool loginViewPassword =false;
+  void toggleLoginPass(){
+     loginViewPassword=!loginViewPassword;
+  }
+
+
+
 
   Future<void> registerEitherFailureOrUser({
     required RegisterParams registerParams,
