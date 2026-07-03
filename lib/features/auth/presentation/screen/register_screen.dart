@@ -46,7 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             if (state is AuthSuccess) {
               scaffoldMessengerError(
                 context,
-                "Success reg with name ${state.userEntity.dataEntity.fullName}",
+                "Success reg with name ${state.userEntity.dataEntity.name}",
                 color: AppColors.kPrimary,
               );
             } else if (state is AuthFailed) {
@@ -151,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onPressed: () {
                           RegisterParams registerParams =
                               RegisterParams(
-                                email: "test5@gmail.com",
+                                email: "testss5@gmail.com",
                                 password: "123456",
                                 fullName: "test",
                                 phoneNumber:

@@ -4,6 +4,7 @@ import 'package:job_finder/core/errors/failure.dart';
 import 'package:job_finder/core/params/auth_params.dart';
 import 'package:job_finder/core/utils/secure_storage_helper.dart';
 import 'package:job_finder/features/auth/data/data_source/remote_data_source.dart';
+import 'package:job_finder/features/auth/data/models/user_model.dart';
 import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
 import 'package:job_finder/features/auth/domain/repo/auth_repo.dart';
 

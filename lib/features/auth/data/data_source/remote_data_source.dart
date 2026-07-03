@@ -2,6 +2,7 @@ import 'package:job_finder/core/database/api/api_consumer.dart';
 import 'package:job_finder/core/database/api/dio_consumer.dart';
 import 'package:job_finder/core/database/api/end_points.dart';
 import 'package:job_finder/core/params/auth_params.dart';
+import 'package:job_finder/features/auth/data/models/user_model.dart';
 import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
 
 class RemoteDataSource {
@@ -25,7 +26,7 @@ class RemoteDataSource {
       },
     );
 
-    final UserEntity userEntity = UserEntity.fromMap(
+    final UserModel userEntity = UserModel.fromJson(
       response,
     );
     return userEntity;
