@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // استخدمنا المكتبة هنا
+import 'package:go_router/go_router.dart';
 import 'package:job_finder/core/utils/app_colors.dart';
 import 'package:job_finder/core/utils/images.dart';
 import 'package:job_finder/features/auth/presentation/screen/register_screen.dart';
@@ -29,12 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(milliseconds: 2500));
 
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const RegisterScreen(),
-        ),
-      );
+      GoRouter.of(context).pushReplacement("/register");
     }
   }
 

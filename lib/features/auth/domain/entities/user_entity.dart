@@ -17,8 +17,8 @@ class UserEntity {
     return UserEntity(
       success: map['success'] as bool,
       message: map['message'] as String,
-      timeStamp: map['timeStamp'] as String,
-      dataEntity: map["data"] as UserDataEntity,
+      timeStamp: map['timestamp'] as String,
+      dataEntity: UserDataEntity.fromJson(map["data"]),
     );
   }
 }
