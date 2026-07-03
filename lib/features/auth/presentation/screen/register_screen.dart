@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:job_finder/core/params/auth_params.dart';
 import 'package:job_finder/core/utils/app_spaces.dart';
-import 'package:job_finder/features/onboarding/presentation/state%20managment/auth_cubit.dart';
+import 'package:job_finder/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:job_finder/features/shared/scaffold_message.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/utils/app_colors.dart';
@@ -198,7 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // TODO: Navigate to Login
+                            GoRouter.of(context).pushReplacement("/login");
                           },
                           child: Text(
                             'Login',

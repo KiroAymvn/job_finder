@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart'; // 1. Import flutter_bloc
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:job_finder/core/utils/app_router.dart';
 
-import 'features/onboarding/presentation/state managment/auth_cubit.dart';
+import 'features/auth/presentation/cubit/auth_cubit.dart';
 // 2. Import your AuthCubit here (تأكد من مسار الملف الصحيح)
 // import 'package:job_finder/features/auth/presentation/cubit/auth_cubit.dart';
 
