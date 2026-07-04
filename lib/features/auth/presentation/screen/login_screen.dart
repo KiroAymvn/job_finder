@@ -45,7 +45,6 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
-            // TODO: Handle Login Success/Failed states here when implemented in Cubit
             if (state is AuthSuccess) {
               context.read<AuthCubit>().onSuccessAuth(
                 context,
@@ -91,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextSpan(
                             text: 'NextStep',
                             style: Styles.largeTitle
-                                ?.copyWith(
+                                .copyWith(
                                   color: AppColors.kPrimary,
                                 ),
                           ),
@@ -104,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text(
                       'Log in to your NextStep account to continue your job\nsearch, manage applications, and stay updated with\nthe latest job opportunities.',
                       textAlign: TextAlign.center,
-                      style: Styles.body?.copyWith(
+                      style: Styles.body.copyWith(
                         height: 1.5,
                       ),
                     ),

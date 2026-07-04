@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -9,7 +7,7 @@ import 'package:job_finder/core/params/auth_params.dart';
 import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:job_finder/features/shared/custom_button.dart';
-import 'package:job_finder/features/shared/scaffold_message.dart';
+// Note: scaffold_message.dart is no longer used here directly since onSuccessAuth handles it, but kept the import if needed elsewhere.
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/utils/app_colors.dart';
 
@@ -21,40 +19,44 @@ class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() =>
-      _RegisterScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  TextEditingController nameController =
-      TextEditingController();
-  TextEditingController emailController =
-      TextEditingController();
-  TextEditingController mobileController =
-      TextEditingController();
-  TextEditingController addressController =
-      TextEditingController();
-  TextEditingController passwordController =
-      TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  // Clean Code Practice: Dispose controllers when screen is closed
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    mobileController.dispose();
+    addressController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.kWhite, //[cite: 2]
+      backgroundColor: AppColors.kWhite,
       body: SafeArea(
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
+            // Updated to match LoginScreen behavior
             if (state is AuthSuccess) {
-              scaffoldMessengerError(
+              context.read<AuthCubit>().onSuccessAuth(
                 context,
-                "Success reg with name ${state.userEntity.dataEntity.name}",
-                color: AppColors.kPrimary,
+                message: "New account is created successfully",
               );
             } else if (state is AuthFailed) {
-              scaffoldMessengerError(
+              context.read<AuthCubit>().onSuccessAuth(
                 context,
-                state.errorMessage,
-                color: AppColors.kRed,
+                message: state.errorMessage,
               );
             }
           },
@@ -66,34 +68,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   horizontal: AppSpaces.largeW,
                 ),
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Gap(AppSpaces.largeH),
 
                     // 1. Logo
                     Image.asset(
-                      AppImages.logoGreen, //[cite: 5]
+                      AppImages.logoGreen,
                       height: 50.h,
                       fit: BoxFit.contain,
                     ),
-                    SizedBox(height: 24.h),
+                    Gap(24.h), // Replaced SizedBox with Gap
 
                     // 2. Title (RichText for multiple colors)
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                        style: Styles.largeTitle, //
+                        style: Styles.largeTitle,
                         children: [
                           const TextSpan(
                             text: 'Create Your ',
                           ),
                           TextSpan(
                             text: 'NextStep',
-                            style: Styles.largeTitle
-                                ?.copyWith(
-                                  color: AppColors.kPrimary,
-                                ),
+                            style: Styles.largeTitle?.copyWith(
+                              color: AppColors.kPrimary,
+                            ),
                           ),
                           const TextSpan(text: ' Account'),
                         ],
@@ -107,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       textAlign: TextAlign.center,
                       style: Styles.body?.copyWith(
                         height: 1.5,
-                      ), //
+                      ),
                     ),
                     Gap(AppSpaces.largeH),
 
@@ -115,8 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     CustomTextField(
                       controller: emailController,
                       label: 'Email',
-                      keyboardType:
-                          TextInputType.emailAddress,
+                      keyboardType: TextInputType.emailAddress,
                     ),
                     CustomTextField(
                       controller: nameController,
@@ -137,7 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       isPassword: true,
                     ),
                     CustomTextField(
-                      controller: passwordController,
+                      controller: passwordController, // Note: You might want to use a separate confirmPasswordController later
                       label: 'Confirm Password',
                       isPassword: true,
                     ),
@@ -147,58 +146,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // 5. Register Button
                     CustomButton(
                       onPressed: () {
-                        RegisterParams registerParams =
-                            RegisterParams(
-                              email: "testss5@gmail.com",
-                              password: "123456",
-                              fullName: "test",
-                              phoneNumber: "+201598843214",
-                              address: "cairo",
-                              gender: "MAN",
-                              role: "USER",
-                            );
+                        RegisterParams registerParams = RegisterParams(
+                          email: "testss5@gmail.com",
+                          password: "123456",
+                          fullName: "test",
+                          phoneNumber: "+201598843214",
+                          address: "cairo",
+                          gender: "MAN",
+                          role: "USER",
+                        );
 
-                        context
-                            .read<AuthCubit>()
-                            .registerEitherFailureOrUser(
-                              registerParams:
-                                  registerParams,
-                            );
+                        context.read<AuthCubit>().registerEitherFailureOrUser(
+                          registerParams: registerParams,
+                        );
                       },
                       text: "Register",
                     ),
 
-                    SizedBox(height: 24.h),
+                    Gap(24.h), // Replaced SizedBox with Gap
 
                     // 6. Footer (Login navigation)
                     Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           'Already a member? ',
                           style: Styles.body?.copyWith(
                             color: AppColors.kGrey99,
-                          ), //[cite: 2]
+                          ),
                         ),
                         GestureDetector(
                           onTap: () {
-                            GoRouter.of(
-                              context,
-                            ).pushReplacement("/login");
+                            GoRouter.of(context).pushReplacement("/login");
                           },
                           child: Text(
                             'Login',
-                            // ملاحظة: في التصميم مكتوب Register، لكن برمجياً ومنطقياً يجب أن تكون Login
-                            style: Styles.smallTitle
-                                ?.copyWith(
-                                  color: AppColors.kPrimary,
-                                ), //
+                            style: Styles.smallTitle?.copyWith(
+                              color: AppColors.kPrimary,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 40.h),
+                    Gap(40.h), // Replaced SizedBox with Gap
                   ],
                 ),
               ),
