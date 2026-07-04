@@ -5,7 +5,7 @@ class AppImages {
   // الأيقونات (Icons)
   static const String filledSaveIcon = '$_basePath/icones/filled_save.svg';
   static const String filterIcon = '$_basePath/icones/filter.svg';
-  static const String homeIcon = '$_basePath/icones/home.svg';
+  static const String homeIcon = '$_basePath/icones/profile.svg';
   static const String locationIcon = '$_basePath/icones/location.svg';
   static const String saveIcon = '$_basePath/icones/save.svg';
   static const String searchIcon = '$_basePath/icones/search.svg';

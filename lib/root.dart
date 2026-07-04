@@ -27,12 +27,12 @@
 //   Widget build(BuildContext context) {
 //     return MaterialApp(
 //       title: 'Persistent Bottom Navigation Bar Demo',
-//       home: PersistentTabView(
+//       profile: PersistentTabView(
 //         tabs: [
 //           PersistentTabConfig(
 //             screen: SplashScreen(),
 //             item: ItemConfig(
-//               icon: Icon(Icons.home),
+//               icon: Icon(Icons.profile),
 //               title: "Home",
 //             ),
 //           ),

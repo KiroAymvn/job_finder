@@ -47,16 +47,14 @@ class _LoginScreenState extends State<LoginScreen> {
           listener: (context, state) {
             // TODO: Handle Login Success/Failed states here when implemented in Cubit
             if (state is AuthSuccess) {
-              scaffoldMessengerError(
+              context.read<AuthCubit>().onSuccessAuth(
                 context,
-                "Login Successful!",
-                color: AppColors.kPrimary,
+                message: "Login Successfully",
               );
             } else if (state is AuthFailed) {
-              scaffoldMessengerError(
+              context.read<AuthCubit>().onSuccessAuth(
                 context,
-                state.errorMessage,
-                color: AppColors.kRed,
+                message: state.errorMessage,
               );
             }
           },

@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 import 'package:job_finder/core/database/api/dio_consumer.dart';
 import 'package:job_finder/core/errors/failure.dart';
 import 'package:job_finder/core/params/auth_params.dart';
@@ -9,6 +11,9 @@ import 'package:job_finder/features/auth/data/repo/auth_repo_impl.dart';
 import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
 import 'package:job_finder/features/auth/domain/uses_cases/auth_use_case.dart';
 import 'package:meta/meta.dart';
+
+import '../../../../core/utils/app_colors.dart';
+import '../../../shared/scaffold_message.dart';
 
 part 'auth_state.dart';
 
@@ -54,6 +59,24 @@ class AuthCubit extends Cubit<AuthState> {
       (user) {
         emit(AuthSuccess(userEntity: user));
       },
+    );
+  }
+
+
+  void onSuccessAuth(BuildContext context,{required String message,}){
+    scaffoldMessengerError(
+      context,
+      message,
+      color: AppColors.kPrimary,
+    );
+    GoRouter.of(context).pushReplacement("/profile");
+  }
+
+  void onFailureAuth(BuildContext context,{required String message,}){
+    scaffoldMessengerError(
+      context,
+      message,
+      color: AppColors.kPrimary,
     );
   }
 }
