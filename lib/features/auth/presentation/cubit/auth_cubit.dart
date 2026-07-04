@@ -69,7 +69,7 @@ class AuthCubit extends Cubit<AuthState> {
       message,
       color: AppColors.kPrimary,
     );
-    GoRouter.of(context).pushReplacement("/profile");
+    GoRouter.of(context).pushReplacement("/root");
   }
 
   void onFailureAuth(BuildContext context,{required String message,}){
