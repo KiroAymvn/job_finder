@@ -13,7 +13,7 @@ class Root extends StatelessWidget {
   Root({super.key});
 
   final List<Widget> _screens = [
-    const HomeScreen(),
+     HomeScreen(),
     const Center(child: Text("Search Screen")),
     const Center(child: Text("save Screen")),
     const Center(child: Text("Settings Screen")),
