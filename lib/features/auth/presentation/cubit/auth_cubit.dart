@@ -26,7 +26,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     final failureOrUser = await RegisterUseCase(
       authRepo: AuthRepoImpl(
-        remoteDataSource: RemoteDataSource(
+        remoteDataSource: AuthRemoteDataSource(
           api: DioConsumer(dio: Dio()),
         ),
       ),
@@ -47,7 +47,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     final failOrUser = await LoginUserCase(
       authRepo: AuthRepoImpl(
-        remoteDataSource: RemoteDataSource(
+        remoteDataSource: AuthRemoteDataSource(
           api: DioConsumer(dio: Dio()),
         ),
       ),

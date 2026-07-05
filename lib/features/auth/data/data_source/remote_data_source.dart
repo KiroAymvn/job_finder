@@ -7,10 +7,10 @@ import 'package:job_finder/core/utils/secure_storage_helper.dart';
 import 'package:job_finder/features/auth/data/models/user_model.dart';
 import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
 
-class RemoteDataSource {
+class AuthRemoteDataSource {
   final DioConsumer api;
 
-  RemoteDataSource({required this.api});
+  AuthRemoteDataSource({required this.api});
 
   Future<UserEntity?> register({
     required RegisterParams registerParams,

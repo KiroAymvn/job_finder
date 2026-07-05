@@ -9,7 +9,7 @@ import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
 import 'package:job_finder/features/auth/domain/repo/auth_repo.dart';
 
 class AuthRepoImpl implements AuthRepo {
-  final RemoteDataSource remoteDataSource;
+  final AuthRemoteDataSource remoteDataSource;
 
   AuthRepoImpl({required this.remoteDataSource});
 
