@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:job_finder/core/database/api/dio_client.dart';
 import 'package:job_finder/core/database/api/dio_consumer.dart';
 import 'package:job_finder/core/errors/failure.dart';
 import 'package:job_finder/core/params/auth_params.dart';
@@ -27,7 +28,7 @@ class AuthCubit extends Cubit<AuthState> {
     final failureOrUser = await RegisterUseCase(
       authRepo: AuthRepoImpl(
         remoteDataSource: AuthRemoteDataSource(
-          api: DioConsumer(dio: Dio()),
+          api: DioConsumer(dio: DioClient().dio),
         ),
       ),
     ).call(registerParams: registerParams);
@@ -48,7 +49,7 @@ class AuthCubit extends Cubit<AuthState> {
     final failOrUser = await LoginUserCase(
       authRepo: AuthRepoImpl(
         remoteDataSource: AuthRemoteDataSource(
-          api: DioConsumer(dio: Dio()),
+          api: DioConsumer(dio: DioClient().dio),
         ),
       ),
     ).call(loginParams: loginParams);

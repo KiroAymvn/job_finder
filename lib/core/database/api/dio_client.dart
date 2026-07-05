@@ -26,7 +26,7 @@ class DioClient {
           print(' API Request to: ${options.path}');
           print(' Token for request: ${token ?? 'null'}');
 
-          if (token != null && token.isNotEmpty && token != 'guest') {
+          if (token != null && token.isNotEmpty ) {
             options.headers['Authorization'] = 'Bearer $token';
             print('Authorization header added');
           } else {

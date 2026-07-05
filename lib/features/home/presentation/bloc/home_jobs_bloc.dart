@@ -8,6 +8,8 @@ import 'package:job_finder/features/home/domain/entities/home_entity.dart';
 import 'package:job_finder/features/home/domain/uses_cases/home_jobs_use_case.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../core/database/api/dio_client.dart';
+
 part 'home_jobs_event.dart';
 
 part 'home_jobs_state.dart';
@@ -18,17 +20,20 @@ class HomeJobsBloc
     on<HomeJobsSearchEvent>(_getHomeJobs);
   }
 
-  Future<void> _getHomeJobs(
-    HomeJobsSearchEvent event,
-    Emitter<HomeJobsState> emit,
-  ) async {
+  Future<void> _getHomeJobs(HomeJobsSearchEvent event,
+      Emitter<HomeJobsState> emit,) async {
     emit(HomeJobsLoading());
     final failureOrSuccess = await HomeJobsUseCase(
       homeRepo: HomeRepoImpl(
         homeRemoteDataSource: HomeRemoteDataSource(
-          dioConsumer: DioConsumer(dio: Dio()),
+          dioConsumer: DioConsumer(dio: DioClient().dio),
         ),
       ),
     ).call(params: event.params);
+
+    failureOrSuccess.fold((failure) {
+      emit(
+          HomeJobsFailed(errorMessage: failure.errMessage));
+    }, (success){emit(HomeJobsSuccess(homeEntity: success));});
   }
 }
