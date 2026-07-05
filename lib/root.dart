@@ -9,11 +9,11 @@ import 'package:job_finder/features/home/presentation/screen/home_screen.dart';
 
 class Root extends StatelessWidget {
   final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
+final String userName;
+  Root({super.key, required this.userName});
 
-  Root({super.key});
-
-  final List<Widget> _screens = [
-     HomeScreen(),
+  late final List<Widget> _screens = [
+     HomeScreen(userName),
     const Center(child: Text("Search Screen")),
     const Center(child: Text("save Screen")),
     const Center(child: Text("Settings Screen")),

@@ -64,13 +64,13 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
 
-  void onSuccessAuth(BuildContext context,{required String message,}){
+  void onSuccessAuth(BuildContext context,{required String message,required String userName}){
     scaffoldMessengerError(
       context,
       message,
       color: AppColors.kPrimary,
     );
-    GoRouter.of(context).pushReplacement("/root");
+    GoRouter.of(context).pushReplacement("/root",extra: userName);
   }
 
   void onFailureAuth(BuildContext context,{required String message,}){

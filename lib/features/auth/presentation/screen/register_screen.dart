@@ -7,6 +7,7 @@ import 'package:job_finder/core/params/auth_params.dart';
 import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:job_finder/features/shared/custom_button.dart';
+
 // Note: scaffold_message.dart is no longer used here directly since onSuccessAuth handles it, but kept the import if needed elsewhere.
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/utils/app_colors.dart';
@@ -19,7 +20,8 @@ class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<RegisterScreen> createState() =>
+      _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
@@ -50,13 +52,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             // Updated to match LoginScreen behavior
             if (state is AuthSuccess) {
               context.read<AuthCubit>().onSuccessAuth(
-                context,
-                message: "New account is created successfully",
+                  context,
+                  message: "New account is created successfully",
+                  userName: state.userEntity.dataEntity.name
+
               );
             } else if (state is AuthFailed) {
-              context.read<AuthCubit>().onSuccessAuth(
-                context,
-                message: state.errorMessage,
+              context.read<AuthCubit>().onFailureAuth(
+                  context,
+                  message: state.errorMessage,
               );
             }
           },
@@ -68,7 +72,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   horizontal: AppSpaces.largeW,
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment
+                      .center,
                   children: [
                     Gap(AppSpaces.largeH),
 
@@ -78,7 +83,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       height: 50.h,
                       fit: BoxFit.contain,
                     ),
-                    Gap(24.h), // Replaced SizedBox with Gap
+                    Gap(24.h),
+                    // Replaced SizedBox with Gap
 
                     // 2. Title (RichText for multiple colors)
                     RichText(
@@ -91,7 +97,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           TextSpan(
                             text: 'NextStep',
-                            style: Styles.largeTitle?.copyWith(
+                            style: Styles.largeTitle
+                                ?.copyWith(
                               color: AppColors.kPrimary,
                             ),
                           ),
@@ -115,7 +122,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     CustomTextField(
                       controller: emailController,
                       label: 'Email',
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType
+                          .emailAddress,
                     ),
                     CustomTextField(
                       controller: nameController,
@@ -136,7 +144,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       isPassword: true,
                     ),
                     CustomTextField(
-                      controller: passwordController, // Note: You might want to use a separate confirmPasswordController later
+                      controller: passwordController,
+                      // Note: You might want to use a separate confirmPasswordController later
                       label: 'Confirm Password',
                       isPassword: true,
                     ),
@@ -156,18 +165,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           role: "USER",
                         );
 
-                        context.read<AuthCubit>().registerEitherFailureOrUser(
+                        context
+                            .read<AuthCubit>()
+                            .registerEitherFailureOrUser(
                           registerParams: registerParams,
                         );
                       },
                       text: "Register",
                     ),
 
-                    Gap(24.h), // Replaced SizedBox with Gap
+                    Gap(24.h),
+                    // Replaced SizedBox with Gap
 
                     // 6. Footer (Login navigation)
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment
+                          .center,
                       children: [
                         Text(
                           'Already a member? ',
@@ -177,18 +190,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            GoRouter.of(context).pushReplacement("/login");
+                            GoRouter
+                                .of(context)
+                                .pushReplacement("/login");
                           },
                           child: Text(
                             'Login',
-                            style: Styles.smallTitle?.copyWith(
+                            style: Styles.smallTitle
+                                ?.copyWith(
                               color: AppColors.kPrimary,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    Gap(40.h), // Replaced SizedBox with Gap
+                    Gap(40.h),
+                    // Replaced SizedBox with Gap
                   ],
                 ),
               ),

@@ -13,7 +13,6 @@ abstract class AppRouter {
   static final kLogin = "/login";
 
   static final kRoot = "/root";
-  static final kHome = "/profile";
 
   static final GoRouter router = GoRouter(
     routes: <RouteBase>[
@@ -42,16 +41,10 @@ abstract class AppRouter {
         path: kRoot,
         builder:
             (BuildContext context, GoRouterState state) {
-              return  Root();
+              return  Root(userName:state.extra.toString() );
             },
       ),
-      GoRoute(
-        path: kHome,
-        builder:
-            (BuildContext context, GoRouterState state) {
-              return const HomeScreen();
-            },
-      ),
+
     ],
   );
 }

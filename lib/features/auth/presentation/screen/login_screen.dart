@@ -49,9 +49,10 @@ class _LoginScreenState extends State<LoginScreen> {
               context.read<AuthCubit>().onSuccessAuth(
                 context,
                 message: "Login Successfully",
+                userName: state.userEntity.dataEntity.name
               );
             } else if (state is AuthFailed) {
-              context.read<AuthCubit>().onSuccessAuth(
+              context.read<AuthCubit>().onFailureAuth(
                 context,
                 message: state.errorMessage,
               );

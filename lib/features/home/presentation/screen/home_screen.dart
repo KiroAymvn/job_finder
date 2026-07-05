@@ -15,7 +15,8 @@ import '../../../../core/utils/text_styles.dart';
 
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen(this.userName, {super.key});
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const HomeHeaderWidget(),
+              HomeHeaderWidget(userName: userName,),
               Gap(AppSpaces.largeH),
 
               const SearchBarWidget(),
@@ -58,7 +59,8 @@ class HomeScreen extends StatelessWidget {
 
 
 class HomeHeaderWidget extends StatelessWidget {
-  const HomeHeaderWidget({super.key});
+  const HomeHeaderWidget({super.key, required this.userName});
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +80,7 @@ class HomeHeaderWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Welcome back !', style: Styles.smallBody),
-                Text('Laith Mahdi 👋', style: Styles.mediumTitle),
+                Text('$userName 👋', style: Styles.mediumTitle),
               ],
             ),
           ],
