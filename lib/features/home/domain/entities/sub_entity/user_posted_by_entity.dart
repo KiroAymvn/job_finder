@@ -1,12 +1,12 @@
 
-class UserPostedBy {
+class UserPostedByEntity {
   final String id;
   final String fullName;
   final String email;
   final String? imageUrl;
   final Role role;
 
-  UserPostedBy({
+  UserPostedByEntity({
     required this.id,
     required this.fullName,
     required this.email,

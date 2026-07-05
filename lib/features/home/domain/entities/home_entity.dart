@@ -13,7 +13,7 @@ class HomeEntity {
   final String createdAt;
   final String updatedAt;
   final bool isFavorite;
-  final UserPostedBy userPostedBy;
+  final UserPostedByEntity userPostedByEntity;
 
   HomeEntity({
     required this.id,
@@ -28,6 +28,6 @@ class HomeEntity {
     required this.createdAt,
     required this.updatedAt,
     required this.isFavorite,
-    required this.userPostedBy,
+    required this.userPostedByEntity,
   });
 }
