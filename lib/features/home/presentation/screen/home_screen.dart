@@ -2,10 +2,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:job_finder/core/utils/app_colors.dart';
 import 'package:job_finder/core/utils/app_spaces.dart';
+import 'package:job_finder/features/home/domain/entities/home_entity.dart';
+import 'package:job_finder/features/home/presentation/bloc/home_jobs_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/utils/app_radius.dart';
 import '../../../../core/utils/images.dart';
@@ -23,34 +27,51 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.kWhite,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpaces.largeW,
-            vertical: AppSpaces.smallH,
+        child: BlocBuilder<HomeJobsBloc, HomeJobsState>(
+  builder: (context, state) {
+    return Skeletonizer(
+          enabled: state is HomeJobsLoading,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpaces.largeW,
+              vertical: AppSpaces.smallH,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                HomeHeaderWidget(userName: userName,),
+                Gap(AppSpaces.largeH),
+
+                const SearchBarWidget(),
+                Gap(AppSpaces.largeH),
+
+                Image.asset(AppImages.cover),
+                Gap(AppSpaces.largeH),
+
+                const FindJobSectionWidget(),
+                Gap(AppSpaces.largeH),
+
+                const BrowseCategorySectionWidget(),
+                Gap(AppSpaces.largeH),
+
+                Text('Suggested Job', style: Styles.mediumTitle),
+                Gap(16.h),
+                 state is HomeJobsSuccess? ListView.builder(
+                   shrinkWrap: true,
+                     physics: NeverScrollableScrollPhysics(),
+                     itemCount: state.homeEntity.homeDataEntity.length,
+                     itemBuilder: (context, index) {
+                       final HomeEntity? homeEntity=state.homeEntity;
+                     return SuggestedJobCardWidget(homeEntity: homeEntity,index: index,);
+                     },
+                 ):SizedBox.shrink(),
+                Gap(AppSpaces.largeH * 2), // مسافة إضافية لتجنب شريط التنقل السفلي
+              ],
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              HomeHeaderWidget(userName: userName,),
-              Gap(AppSpaces.largeH),
-
-              const SearchBarWidget(),
-              Gap(AppSpaces.largeH),
-
-              const PromoBannerWidget(),
-              Gap(AppSpaces.largeH),
-
-              const FindJobSectionWidget(),
-              Gap(AppSpaces.largeH),
-
-              const BrowseCategorySectionWidget(),
-              Gap(AppSpaces.largeH),
-
-              const SuggestedJobCardWidget(),
-              Gap(AppSpaces.largeH * 2), // مسافة إضافية لتجنب شريط التنقل السفلي
-            ],
-          ),
-        ),
+        );
+  },
+),
       ),
     );
   }
@@ -144,59 +165,6 @@ class SearchBarWidget extends StatelessWidget {
 
 // ---------------------------------------------------------
 
-// features/home/presentation/widgets/promo_banner_widget.dart
-class PromoBannerWidget extends StatelessWidget {
-  const PromoBannerWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: AppColors.kPrimary,
-        borderRadius: BorderRadius.circular(AppRadius.mediumR),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Let's find a new job\nsuitable for you",
-                  style: Styles.mediumTitle?.copyWith(
-                    color: AppColors.kWhite,
-                    height: 1.4,
-                  ),
-                ),
-                Gap(16.h),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                  decoration: BoxDecoration(
-                    color: AppColors.kWhite.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(AppRadius.smallR),
-                  ),
-                  child: Text(
-                    'See More',
-                    style: Styles.smallTitle?.copyWith(color: AppColors.kWhite),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // يمكنك استبدال الأيقونة بصورة المرأة الموجودة في التصميم إذا توفرت في الـ Assets
-          Expanded(
-            flex: 1,
-            child: Icon(CupertinoIcons.briefcase, color: AppColors.kWhite, size: 80.sp),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ---------------------------------------------------------
 
 // features/home/presentation/widgets/find_job_section_widget.dart
@@ -215,7 +183,7 @@ class FindJobSectionWidget extends StatelessWidget {
             // Left Large Card (Remote Job)
             Expanded(
               child: _buildJobTypeCard(
-                icon: CupertinoIcons.device_laptop,
+                imageName: AppImages.remoteJob,
                 count: "74.5K",
                 title: "Remote Job",
                 height: 180.h,
@@ -228,14 +196,14 @@ class FindJobSectionWidget extends StatelessWidget {
               child: Column(
                 children: [
                   _buildJobTypeCard(
-                    icon: CupertinoIcons.briefcase,
+                    imageName: AppImages.partTimeJob,
                     count: "33.8K",
                     title: "Part Time",
                     height: 82.h,
                   ),
                   Gap(16.h),
                   _buildJobTypeCard(
-                    icon: CupertinoIcons.person_solid,
+                    imageName: AppImages.fullTimeJob,
                     count: "23.8K",
                     title: "Full Time",
                     height: 82.h,
@@ -249,7 +217,7 @@ class FindJobSectionWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildJobTypeCard({required IconData icon, required String count, required String title, required double height, bool isLarge = false}) {
+  Widget _buildJobTypeCard({required String  imageName, required String count, required String title, required double height, bool isLarge = false}) {
     return Container(
       height: height,
       width: double.infinity,
@@ -263,7 +231,7 @@ class FindJobSectionWidget extends StatelessWidget {
           ? Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: AppColors.kBlue, size: 40.sp),
+          Image.asset(imageName,height: 40.h,),
           Gap(16.h),
           Text(count, style: Styles.largeTitle),
           Gap(4.h),
@@ -272,7 +240,7 @@ class FindJobSectionWidget extends StatelessWidget {
       )
           : Row(
         children: [
-          Icon(icon, color: AppColors.kBlue, size: 30.sp),
+          Image.asset(imageName,height: 30.h,),
           Gap(12.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,17 +272,17 @@ class BrowseCategorySectionWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildCategoryItem(CupertinoIcons.building_2_fill, "Company", isActive: true),
-            _buildCategoryItem(CupertinoIcons.briefcase_fill, "Part Time"),
-            _buildCategoryItem(CupertinoIcons.person_2_fill, "Full Time"),
-            _buildCategoryItem(CupertinoIcons.person_crop_circle, "Freelancer"),
+            _buildCategoryItem(AppImages.company, "Company", isActive: true),
+            _buildCategoryItem(AppImages.partTimeJob, "Part Time"),
+            _buildCategoryItem(AppImages.fullTimeJob, "Full Time"),
+            _buildCategoryItem(AppImages.freelancer, "Freelancer"),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildCategoryItem(IconData icon, String title, {bool isActive = false}) {
+  Widget _buildCategoryItem(String imageName, String title, {bool isActive = false}) {
     return Column(
       children: [
         Container(
@@ -324,11 +292,9 @@ class BrowseCategorySectionWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadius.mediumR),
             border: isActive ? null : Border.all(color: AppColors.kGreyEE),
           ),
-          child: Icon(
-            icon,
-            color: isActive ? AppColors.kPrimary : AppColors.kBlue,
-            size: 28.sp,
-          ),
+          child:    Image.asset(imageName,height: 40.sp,),
+
+
         ),
         Gap(8.h),
         Text(
@@ -347,18 +313,19 @@ class BrowseCategorySectionWidget extends StatelessWidget {
 
 // features/home/presentation/widgets/suggested_job_card_widget.dart
 class SuggestedJobCardWidget extends StatelessWidget {
-  const SuggestedJobCardWidget({super.key});
-
+   SuggestedJobCardWidget({super.key, required this.homeEntity, required this.index});
+final HomeEntity? homeEntity;
+final int index;
   @override
   Widget build(BuildContext context) {
     // استخدام ValueNotifier لإدارة حالة زر الحفظ (Bookmark) بدون setState
     final ValueNotifier<bool> isSavedNotifier = ValueNotifier<bool>(false);
-
+final item=homeEntity?.homeDataEntity[index];
+final userPostedBy=item?.userPostedByEntity;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Suggested Job', style: Styles.mediumTitle),
-        Gap(16.h),
+  
         Container(
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
@@ -389,24 +356,21 @@ class SuggestedJobCardWidget extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Ui Designer', style: Styles.mediumTitle),
-                        Text('Google', style: Styles.smallBody),
+                        Text(item!.title, style: Styles.mediumTitle),
+                        Text(userPostedBy!.fullName, style: Styles.smallBody),
                       ],
                     ),
                   ),
                   // Bookmark Button managed by ValueNotifier
-                  ValueListenableBuilder<bool>(
-                    valueListenable: isSavedNotifier,
-                    builder: (context, isSaved, child) {
-                      return GestureDetector(
-                        onTap: () => isSavedNotifier.value = !isSavedNotifier.value,
-                        child: Icon(
-                          isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
-                          color: AppColors.kPrimary,
-                          size: 24.sp,
-                        ),
-                      );
+                  GestureDetector(
+                    onTap: () {
+                      
                     },
+                    child: Icon(
+                      item.isFavorite ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
+                      color: AppColors.kPrimary,
+                      size: 24.sp,
+                    ),
                   ),
                 ],
               ),
@@ -415,28 +379,54 @@ class SuggestedJobCardWidget extends StatelessWidget {
               // Tags: Design, Full Time
               Row(
                 children: [
-                  _buildTag("Design"),
+                  _buildTag(item.jobType),
                   Gap(8.w),
-                  _buildTag("Full Time"),
+                  _buildTag(item.jobLevel),
                 ],
               ),
               Gap(16.h),
 
               // Footer: Location & Salary
+// Footer: Location & Salary
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(CupertinoIcons.location, color: AppColors.kBlack, size: 16.sp),
-                      Gap(4.w),
-                      Text('California', style: Styles.body?.copyWith(color: AppColors.kBlack)),
-                    ],
+                  // 1. استخدام Expanded للموقع لكي يتم قصه (ellipsis) إذا كان طويلاً جداً
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Icon(CupertinoIcons.location, color: AppColors.kBlack, size: 16.sp),
+                        Gap(4.w),
+                        Expanded(
+                          child: Text(
+                            item.location,
+                            style: Styles.body?.copyWith(color: AppColors.kBlack),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis, // يقص النص الزائد ويضع ...
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  Text('\$15/Mo', style: Styles.mediumTitle),
+
+                  Gap(12.w),
+
+                  Flexible(
+                    flex: 0,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        item.salaryRange,
+                        style: Styles.mediumTitle?.copyWith(
+                          color: AppColors.kPrimary,
+                          fontSize: 16.sp,
+                        ),
+                        maxLines: 1,
+                      ),
+                    ),
+                  ),
                 ],
-              ),
-            ],
+              ),            ],
           ),
         ),
       ],

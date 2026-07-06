@@ -1,10 +1,9 @@
-
 class UserPostedByEntity {
   final String id;
   final String fullName;
   final String email;
   final String? imageUrl;
-  final Role role;
+  final String role;
 
   UserPostedByEntity({
     required this.id,
@@ -14,5 +13,3 @@ class UserPostedByEntity {
     required this.role,
   });
 }
-
-enum Role { ADMIN, USER }
