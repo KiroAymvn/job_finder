@@ -44,3 +44,7 @@ class SecureStorageHelper {
 
 
 }
+class AppSecureKey{
+  static final String token="token";
+  static final String userName="userName";
+}

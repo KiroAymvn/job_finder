@@ -32,7 +32,8 @@ class AuthRemoteDataSource {
       response,
     );
     final secure=await SecureStorageHelper.getInstance();
-    secure?.assignData(key: "token", value: userModel.dataEntity.token);
+    secure?.assignData(key: AppSecureKey.token, value: userModel.dataEntity.token);
+    secure?.assignData(key: AppSecureKey.userName, value: userModel.dataEntity.name);
     return userModel;
   }
 
@@ -50,6 +51,7 @@ class AuthRemoteDataSource {
       response,
     );
     final secure=await SecureStorageHelper.getInstance();
-    secure?.assignData(key: "token", value: userModel.dataEntity.token);
+    secure?.assignData(key: AppSecureKey.token, value: userModel.dataEntity.token);
+    secure?.assignData(key: AppSecureKey.userName, value: userModel.dataEntity.name);
     return userModel;
   }}
