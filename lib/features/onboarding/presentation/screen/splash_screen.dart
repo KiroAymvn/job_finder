@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(milliseconds: 2500));
 
     if (mounted) {
-      GoRouter.of(context).pushReplacement("/register");
+      GoRouter.of(context).pushReplacement("/OnBoarding");
     }
   }
 

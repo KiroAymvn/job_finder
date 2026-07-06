@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:job_finder/features/onboarding/presentation/screen/on_bording_screen.dart';
 import 'package:job_finder/root.dart';
 
 import '../../features/auth/presentation/screen/login_screen.dart';
@@ -9,6 +10,7 @@ import '../../features/onboarding/presentation/screen/splash_screen.dart';
 
 abstract class AppRouter {
   static final kSplash = "/";
+  static final kOnBoarding = "/OnBoarding";
   static final kRegister = "/register";
   static final kLogin = "/login";
 
@@ -22,6 +24,13 @@ abstract class AppRouter {
             (BuildContext context, GoRouterState state) {
               return const SplashScreen();
             },
+      ),
+      GoRoute(
+        path: kOnBoarding,
+        builder:
+            (BuildContext context, GoRouterState state) {
+          return OnBoardingScreen();
+        },
       ),
       GoRoute(
         path: kRegister,
