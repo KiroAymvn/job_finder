@@ -40,4 +40,5 @@ class AppImages {
   static const String success = '$_basePath/success.png';
   static const String termsAndConditions = '$_basePath/terms_and_conditions.png';
   static const String userAvatar = '$_basePath/user_avatar.png';
+  static const String jobSearch = '$_basePath/job-search.png';
 }

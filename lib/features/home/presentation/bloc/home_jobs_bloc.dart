@@ -16,20 +16,14 @@ part 'home_jobs_state.dart';
 
 class HomeJobsBloc
     extends Bloc<HomeJobsEvent, HomeJobsState> {
-  HomeJobsBloc() : super(HomeJobsInitial()) {
+  HomeJobsBloc({required this.homeJobsUseCase}) : super(HomeJobsInitial()) {
     on<HomeJobsSearchEvent>(_getHomeJobs);
   }
-
+final HomeJobsUseCase homeJobsUseCase;
   Future<void> _getHomeJobs(HomeJobsSearchEvent event,
       Emitter<HomeJobsState> emit,) async {
     emit(HomeJobsLoading());
-    final failureOrSuccess = await HomeJobsUseCase(
-      homeRepo: HomeRepoImpl(
-        homeRemoteDataSource: HomeRemoteDataSource(
-          dioConsumer: DioConsumer(dio: DioClient().dio),
-        ),
-      ),
-    ).call(params: event.params);
+    final failureOrSuccess = await homeJobsUseCase.call(params: event.params);
 
     failureOrSuccess.fold((failure) {
       emit(

@@ -2,17 +2,31 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // 1. Import flutter_bloc
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:job_finder/core/database/api/dio_client.dart';
+import 'package:job_finder/core/database/api/dio_consumer.dart';
 import 'package:job_finder/core/params/list_all_jobs.dart';
 import 'package:job_finder/core/utils/app_router.dart';
 import 'package:job_finder/core/utils/secure_storage_helper.dart';
+import 'package:job_finder/features/auth/data/data_source/remote_data_source.dart';
+import 'package:job_finder/features/auth/data/repo/auth_repo_impl.dart';
+import 'package:job_finder/features/auth/domain/uses_cases/auth_use_case.dart';
+import 'package:job_finder/features/home/data/data_source/home_remote_data_source.dart';
+import 'package:job_finder/features/home/data/repo/home_repo_impl.dart';
+import 'package:job_finder/features/home/domain/uses_cases/home_jobs_use_case.dart';
 import 'package:job_finder/features/home/presentation/bloc/home_jobs_bloc.dart';
 
+import 'core/utils/di.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 
 // 2. Import your AuthCubit here (تأكد من مسار الملف الصحيح)
 // import 'package:job_finder/features/auth/presentation/bloc/auth_cubit.dart';
 
 void main() async {
+  // 1. ضمان تهيئة الفلاتر قبل تشغيل أي شيء
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 2. تشغيل وبناء شجرة الاعتماديات (Dependency Injection)
+  // setupLocator();
   runApp(
     DevicePreview(
       enabled: false,
@@ -35,16 +49,47 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider<AuthCubit>(
-              create: (context) => AuthCubit(),
-            ),
-            BlocProvider<HomeJobsBloc>(
-              lazy: false, // 👈 إضافة هذا السطر تجبر الـ Bloc على العمل فوراً
-              create: (context) => HomeJobsBloc()
-                ..add(
-                  HomeJobsSearchEvent(
-                    params: ListAllJobsParams(),
+              create: (context) => AuthCubit(
+                registerUseCase: RegisterUseCase(
+                  authRepo: AuthRepoImpl(
+                    remoteDataSource: AuthRemoteDataSource(
+                      api: DioConsumer(
+                        dio: DioClient().dio,
+                      ),
+                    ),
                   ),
                 ),
+                loginUseCase: LoginUserCase(
+                  authRepo: AuthRepoImpl(
+                    remoteDataSource: AuthRemoteDataSource(
+                      api: DioConsumer(
+                        dio: DioClient().dio,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            BlocProvider<HomeJobsBloc>(
+              lazy: false,
+              // 👈 إضافة هذا السطر تجبر الـ Bloc على العمل فوراً
+              create: (context) =>
+                  HomeJobsBloc(
+                    homeJobsUseCase: HomeJobsUseCase(
+                      homeRepo: HomeRepoImpl(
+                        homeRemoteDataSource:
+                            HomeRemoteDataSource(
+                              dioConsumer: DioConsumer(
+                                dio: DioClient().dio,
+                              ),
+                            ),
+                      ),
+                    ),
+                  )..add(
+                    HomeJobsSearchEvent(
+                      params: ListAllJobsParams(),
+                    ),
+                  ),
             ),
             // يمكنك إضافة المزيد من الـ Providers هنا لاحقاً
             // BlocProvider<AnotherCubit>(create: (context) => AnotherCubit()),

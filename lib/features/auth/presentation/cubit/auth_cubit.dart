@@ -19,19 +19,14 @@ import '../../../shared/scaffold_message.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthInitial());
-
+  AuthCubit({required this.registerUseCase, required this.loginUseCase}) : super(AuthInitial());
+  final RegisterUseCase registerUseCase;
+  final LoginUserCase loginUseCase;
   Future<void> registerEitherFailureOrUser({
     required RegisterParams registerParams,
   }) async {
     emit(AuthLoading());
-    final failureOrUser = await RegisterUseCase(
-      authRepo: AuthRepoImpl(
-        remoteDataSource: AuthRemoteDataSource(
-          api: DioConsumer(dio: DioClient().dio),
-        ),
-      ),
-    ).call(registerParams: registerParams);
+    final failureOrUser = await registerUseCase.call(registerParams: registerParams);
     failureOrUser.fold(
       (failure) {
         emit(AuthFailed(errorMessage: failure.errMessage));
@@ -46,13 +41,7 @@ class AuthCubit extends Cubit<AuthState> {
     required LoginParams loginParams,
   }) async {
     emit(AuthLoading());
-    final failOrUser = await LoginUserCase(
-      authRepo: AuthRepoImpl(
-        remoteDataSource: AuthRemoteDataSource(
-          api: DioConsumer(dio: DioClient().dio),
-        ),
-      ),
-    ).call(loginParams: loginParams);
+    final failOrUser = await loginUseCase.call(loginParams: loginParams);
     failOrUser.fold(
       (failure) {
         emit(AuthFailed(errorMessage: failure.errMessage));
