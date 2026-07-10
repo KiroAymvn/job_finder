@@ -22,11 +22,9 @@ import 'features/auth/presentation/cubit/auth_cubit.dart';
 // import 'package:job_finder/features/auth/presentation/bloc/auth_cubit.dart';
 
 void main() async {
-  // 1. ضمان تهيئة الفلاتر قبل تشغيل أي شيء
   WidgetsFlutterBinding.ensureInitialized();
+  await setUp();
 
-  // 2. تشغيل وبناء شجرة الاعتماديات (Dependency Injection)
-  // setupLocator();
   runApp(
     DevicePreview(
       enabled: false,
@@ -49,43 +47,12 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider<AuthCubit>(
-              create: (context) => AuthCubit(
-                registerUseCase: RegisterUseCase(
-                  authRepo: AuthRepoImpl(
-                    remoteDataSource: AuthRemoteDataSource(
-                      api: DioConsumer(
-                        dio: DioClient().dio,
-                      ),
-                    ),
-                  ),
-                ),
-                loginUseCase: LoginUserCase(
-                  authRepo: AuthRepoImpl(
-                    remoteDataSource: AuthRemoteDataSource(
-                      api: DioConsumer(
-                        dio: DioClient().dio,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+              create: (context) => sl<AuthCubit>()),
             BlocProvider<HomeJobsBloc>(
               lazy: false,
               // 👈 إضافة هذا السطر تجبر الـ Bloc على العمل فوراً
               create: (context) =>
-                  HomeJobsBloc(
-                    homeJobsUseCase: HomeJobsUseCase(
-                      homeRepo: HomeRepoImpl(
-                        homeRemoteDataSource:
-                            HomeRemoteDataSource(
-                              dioConsumer: DioConsumer(
-                                dio: DioClient().dio,
-                              ),
-                            ),
-                      ),
-                    ),
-                  )..add(
+                  sl<HomeJobsBloc>()..add(
                     HomeJobsSearchEvent(
                       params: ListAllJobsParams(),
                     ),

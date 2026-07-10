@@ -10,13 +10,13 @@ import '../../features/home/presentation/screen/home_screen.dart';
 import '../../features/onboarding/presentation/screen/splash_screen.dart';
 
 abstract class AppRouter {
-  static final kSplash = "/s";
+  static final kSplash = "/";
   static final kOnBoarding = "/OnBoarding";
   static final kRegister = "/register";
   static final kLogin = "/login";
 
   static final kRoot = "/root";
-  static final kGetJobBySlugScreen = "/";
+  static final kGetJobBySlugScreen = "/s";
 
   static final GoRouter router = GoRouter(
     routes: <RouteBase>[
