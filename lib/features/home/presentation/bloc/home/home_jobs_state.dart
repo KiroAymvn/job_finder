@@ -13,3 +13,6 @@ final class HomeJobsFailed extends HomeJobsState {
   final String errorMessage;
   HomeJobsFailed({required this.errorMessage});
 }
+
+
+

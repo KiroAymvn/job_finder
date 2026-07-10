@@ -13,10 +13,11 @@ import 'package:job_finder/features/auth/domain/uses_cases/auth_use_case.dart';
 import 'package:job_finder/features/home/data/data_source/home_remote_data_source.dart';
 import 'package:job_finder/features/home/data/repo/home_repo_impl.dart';
 import 'package:job_finder/features/home/domain/uses_cases/home_jobs_use_case.dart';
-import 'package:job_finder/features/home/presentation/bloc/home_jobs_bloc.dart';
+import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
 
 import 'core/utils/di.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/home/presentation/bloc/detailed_job/job_details_cubit.dart';
 
 // 2. Import your AuthCubit here (تأكد من مسار الملف الصحيح)
 // import 'package:job_finder/features/auth/presentation/bloc/auth_cubit.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
                     ),
                   ),
             ),
+            BlocProvider<JobDetailsCubit>(create: (context) => sl<JobDetailsCubit>()),
             // يمكنك إضافة المزيد من الـ Providers هنا لاحقاً
             // BlocProvider<AnotherCubit>(create: (context) => AnotherCubit()),
           ],

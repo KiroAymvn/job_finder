@@ -4,5 +4,6 @@ class AppEndPoint {
   static const String login = "auth/login";
   static const String getMyProfile = "auth/me";
   static const String listAllJobs = "/job/all";
+  static const String getJobDetails = "/job/detail";
 
 }

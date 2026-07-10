@@ -16,7 +16,7 @@ abstract class AppRouter {
   static final kLogin = "/login";
 
   static final kRoot = "/root";
-  static final kGetJobBySlugScreen = "/s";
+  static final kGetJobBySlugScreen = "/getJobBySlugScreen";
 
   static final GoRouter router = GoRouter(
     routes: <RouteBase>[
@@ -59,7 +59,7 @@ abstract class AppRouter {
         path: kGetJobBySlugScreen,
         builder:
             (BuildContext context, GoRouterState state) {
-              return  GetJobBySlugScreen();
+              return  GetJobBySlugScreen(jobSlug: state.extra.toString());
             },
       ),
 

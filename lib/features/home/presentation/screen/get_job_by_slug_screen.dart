@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -9,10 +10,74 @@ import 'package:job_finder/core/utils/app_radius.dart';
 import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/core/utils/images.dart';
 import 'package:job_finder/core/utils/text_styles.dart';
+import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
 import 'package:job_finder/features/shared/custom_button.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class GetJobBySlugScreen extends StatelessWidget {
-  const GetJobBySlugScreen({super.key});
+// تأكد من مسارات الاستيراد (Imports) حسب هيكلة مشروعك
+import 'package:job_finder/features/home/domain/entities/job_details_entity.dart';
+import 'package:job_finder/features/home/domain/entities/sub_entity/user_posted_by_entity.dart';
+
+import '../bloc/detailed_job/job_details_cubit.dart';
+import '../bloc/detailed_job/job_details_state.dart';
+
+class GetJobBySlugScreen extends StatefulWidget {
+  const GetJobBySlugScreen({super.key, required this.jobSlug});
+
+  final String jobSlug;
+
+  @override
+  State<GetJobBySlugScreen> createState() => _GetJobBySlugScreenState();
+}
+
+class _GetJobBySlugScreenState extends State<GetJobBySlugScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _fetchJobDetails();
+  }
+
+  void _fetchJobDetails() {
+    context.read<JobDetailsCubit>().getJobDetails(widget.jobSlug);
+  }
+
+  // دالة لإنشاء بيانات وهمية ليستخدمها الـ Skeletonizer في رسم تأثير التحميل بشكل جميل
+  JobDetailsEntity _getDummyJobForSkeleton() {
+    return JobDetailsEntity(
+      id: '0',
+      title: 'Loading Job Title...',
+      experience: 'Loading..',
+      jobLevel: 'Loading..',
+      jobType: 'Loading..',
+      location: 'Loading Location...',
+      salaryRange: '\$00,000 - \$00,000',
+      slug: 'loading',
+      category: 'Loading',
+      createdAt: '',
+      updatedAt: 'Loading...',
+      isFavorite: false,
+      userPostedByEntity: UserPostedByEntity(
+        id: '0',
+        fullName: 'Loading Company Name',
+        email: '',
+        role: '',
+        imageUrl: null,
+      ),
+      description:
+      'This is a dummy description text specifically placed here so the Skeletonizer has enough lines to display a beautiful and realistic loading effect for the user.',
+      skills: ['Skill 1', 'Skill 2', 'Skill 3'],
+      responsibilities: [
+        'Loading responsibility number one for the skeleton',
+        'Loading responsibility number two',
+        'Loading responsibility number three'
+      ],
+      requirements: [
+        'Loading requirement number one',
+        'Loading requirement number two'
+      ],
+      benefits: ['Loading benefit 1', 'Loading benefit 2'],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,95 +85,129 @@ class GetJobBySlugScreen extends StatelessWidget {
       backgroundColor: AppColors.kWhite,
       appBar: _buildAppBar(context),
 
-      // الزر الثابت أسفل الشاشة
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppSpaces.largeW,
-          vertical: AppSpaces.smallH * 1.5,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.kWhite,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.kBlack.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: CustomButton(
-          onPressed: () {
-            // TODO: Implement Apply action
-          },
-          text: "Apply Now",
-        ),
-      ),
+      body: BlocConsumer<JobDetailsCubit, JobDetailsState>( // 👈 التعديل هنا
+        listener: (context, state) {
+          if (state is JobDetailsFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage)),
+            );
+          }
+        },
+        builder: (context, state) {
+          // 1. معالجة حالة الفشل
+          if (state is JobDetailsFailed) {
+            return Center(
+              child: Text(state.errorMessage, style: Styles.mediumTitle?.copyWith(color: AppColors.kRed)),
+            );
+          }
 
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppSpaces.largeW,
-          vertical: AppSpaces.smallH,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const _JobHeaderWidget(),
-            Gap(AppSpaces.largeH),
+          // 2. تحديد هل الشاشة في حالة تحميل أم لا
+          final bool isLoading = state is! JobDetailsSuccess;
 
-            const _JobMetricsWidget(),
-            Gap(AppSpaces.largeH),
+          // 3. اختيار البيانات
+          final JobDetailsEntity job = state is JobDetailsSuccess
+              ? state.jobDetailsEntity
+              : _getDummyJobForSkeleton();
 
-            const _SkillsSectionWidget(),
-            Gap(AppSpaces.largeH),
+          // ... باقى الكود الخاص بالـ Skeletonizer يظل كما هو
+          return Column(
+            children: [
+              Expanded(
+                child: Skeletonizer(
+                  enabled: state is JobDetailsLoading, // تفعيل التأثير بناءً على الحالة
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppSpaces.largeW,
+                      vertical: AppSpaces.smallH,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // تمرير البيانات المحددة بدلاً من الـ Hardcoded
+                        _JobHeaderWidget(
+                          title: job.title,
+                          company: job.userPostedByEntity.fullName,
+                          location: job.location,
+                          salary: job.salaryRange,
+                        ),
+                        Gap(AppSpaces.largeH),
 
-            _SectionTitle(title: "Job Description"),
-            Gap(AppSpaces.smallH),
-            Text(
-              "Conduct user research to inform product design decisions. Plan and execute usability studies, interviews, and surveys.",
-              style: Styles.body?.copyWith(height: 1.5),
-            ),
-            Gap(AppSpaces.largeH),
+                        _JobMetricsWidget(
+                          experience: job.experience,
+                          jobType: job.jobType,
+                          level: job.jobLevel,
+                          updatedAt: job.updatedAt,
+                        ),
+                        Gap(AppSpaces.largeH),
 
-            _SectionTitle(title: "Responsibilities"),
-            Gap(AppSpaces.smallH),
-            const _BulletListWidget(
-              items: [
-                "Plan and conduct user research studies",
-                "Analyze research data and synthesize insights",
-                "Create user personas and journey maps",
-                "Present findings to stakeholders",
-                "Collaborate with designers and product managers",
-              ],
-            ),
-            Gap(AppSpaces.largeH),
+                        if (job.skills.isNotEmpty) ...[
+                          _SkillsSectionWidget(skills: job.skills),
+                          Gap(AppSpaces.largeH),
+                        ],
 
-            _SectionTitle(title: "Requirements"),
-            Gap(AppSpaces.smallH),
-            const _BulletListWidget(
-              items: [
-                "Bachelor's degree in HCI, Psychology, or related field",
-                "3+ years UX research experience",
-                "Experience with qualitative and quantitative methods",
-                "Strong analytical skills",
-                "Excellent presentation abilities",
-              ],
-            ),
-            Gap(AppSpaces.largeH),
+                        if (job.description.isNotEmpty) ...[
+                          const _SectionTitle(title: "Job Description"),
+                          Gap(AppSpaces.smallH),
+                          Text(
+                            job.description,
+                            style: Styles.body?.copyWith(height: 1.5),
+                          ),
+                          Gap(AppSpaces.largeH),
+                        ],
 
-            _SectionTitle(title: "Benefits"),
-            Gap(AppSpaces.smallH),
-            const _BulletListWidget(
-              items: [
-                "Competitive Salary",
-                "Health Insurance",
-                "Remote Work Options",
-                "Research Tools",
-                "Conference Budget",
-              ],
-            ),
-            Gap(AppSpaces.largeH),
-          ],
-        ),
+                        if (job.responsibilities.isNotEmpty) ...[
+                          const _SectionTitle(title: "Responsibilities"),
+                          Gap(AppSpaces.smallH),
+                          _BulletListWidget(items: job.responsibilities),
+                          Gap(AppSpaces.largeH),
+                        ],
+
+                        if (job.requirements.isNotEmpty) ...[
+                          const _SectionTitle(title: "Requirements"),
+                          Gap(AppSpaces.smallH),
+                          _BulletListWidget(items: job.requirements),
+                          Gap(AppSpaces.largeH),
+                        ],
+
+                        if (job.benefits.isNotEmpty) ...[
+                          const _SectionTitle(title: "Benefits"),
+                          Gap(AppSpaces.smallH),
+                          _BulletListWidget(items: job.benefits),
+                          Gap(AppSpaces.largeH),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // الزر الثابت أسفل الشاشة (تم وضعه خارج الـ Skeletonizer ليبقى نشطاً أو ظاهراً بشكل طبيعي)
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSpaces.largeW,
+                  vertical: AppSpaces.smallH * 1.5,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.kWhite,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.kBlack.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: CustomButton(
+                  onPressed: isLoading ? () {} : () {
+                    // TODO: Implement Apply action
+                  },
+                  text: "Apply Now",
+                  buttonColor: isLoading ? AppColors.kGreyDE : AppColors.kPrimary,
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -145,11 +244,21 @@ class GetJobBySlugScreen extends StatelessWidget {
 }
 
 // ---------------------------------------------------------
-// المكونات الداخلية (Private Widgets for Clean Code)
+// المكونات الداخلية (تستقبل البيانات عبر الـ Constructor الآن)
 // ---------------------------------------------------------
 
 class _JobHeaderWidget extends StatelessWidget {
-  const _JobHeaderWidget();
+  final String title;
+  final String company;
+  final String location;
+  final String salary;
+
+  const _JobHeaderWidget({
+    required this.title,
+    required this.company,
+    required this.location,
+    required this.salary,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -163,42 +272,30 @@ class _JobHeaderWidget extends StatelessWidget {
               width: 50.w,
               decoration: BoxDecoration(
                 color: AppColors.kGreyF3,
-                borderRadius: BorderRadius.circular(
-                  AppRadius.smallR,
-                ),
+                borderRadius: BorderRadius.circular(AppRadius.smallR),
               ),
               child: Center(
                 // Placeholder for Google Logo
-                child: Image.asset(AppImages.jobSearch)
+                child: Image.asset(AppImages.jobSearch),
               ),
             ),
             Gap(12.w),
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Ui Designer",
-                    style: Styles.largeTitle,
-                  ),
+                  Text(title, style: Styles.largeTitle),
                   Gap(4.h),
-                  Text("Google", style: Styles.smallBody),
+                  Text(company, style: Styles.smallBody),
                 ],
               ),
             ),
           ],
         ),
         Gap(16.h),
-        _buildIconTextRow(
-          CupertinoIcons.location,
-          "California",
-        ),
+        _buildIconTextRow(CupertinoIcons.location, location),
         Gap(8.h),
-        _buildIconTextRow(
-          CupertinoIcons.creditcard,
-          "14.000",
-        ),
+        _buildIconTextRow(CupertinoIcons.creditcard, salary),
       ],
     );
   }
@@ -215,39 +312,39 @@ class _JobHeaderWidget extends StatelessWidget {
 }
 
 class _JobMetricsWidget extends StatelessWidget {
-  const _JobMetricsWidget();
+  final String experience;
+  final String jobType;
+  final String level;
+  final String updatedAt;
+
+  const _JobMetricsWidget({
+    required this.experience,
+    required this.jobType,
+    required this.level,
+    required this.updatedAt,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // IntrinsicHeight مهم جداً ليجعل الـ VerticalDivider يعمل بشكل صحيح
         IntrinsicHeight(
           child: Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildMetricItem("Experience", "4 - 6 years"),
-              const VerticalDivider(
-                color: AppColors.kGreyEE,
-                thickness: 1,
-              ),
-              _buildMetricItem("Job Type", "Full Time"),
-              const VerticalDivider(
-                color: AppColors.kGreyEE,
-                thickness: 1,
-              ),
-              _buildMetricItem("Level", "Entry level"),
+              _buildMetricItem("Experience", experience),
+              const VerticalDivider(color: AppColors.kGreyEE, thickness: 1),
+              _buildMetricItem("Job Type", jobType),
+              const VerticalDivider(color: AppColors.kGreyEE, thickness: 1),
+              _buildMetricItem("Level", level),
             ],
           ),
         ),
         Gap(16.h),
         Text(
-          "Updated 3 days ago",
-          style: Styles.smallBody?.copyWith(
-            color: AppColors.kGrey99,
-          ),
+          "Updated: $updatedAt",
+          style: Styles.smallBody?.copyWith(color: AppColors.kGrey99),
         ),
       ],
     );
@@ -268,31 +365,21 @@ class _JobMetricsWidget extends StatelessWidget {
 }
 
 class _SkillsSectionWidget extends StatelessWidget {
-  const _SkillsSectionWidget();
+  final List<String> skills;
+
+  const _SkillsSectionWidget({required this.skills});
 
   @override
   Widget build(BuildContext context) {
-    final List<String> skills = [
-      "User Research",
-      "Usability Testing",
-      "Data Analysis",
-      "Interview Techniques",
-      "Persona Development",
-      "Journey Mapping",
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionTitle(title: "Skills"),
+        const _SectionTitle(title: "Skills"),
         Gap(12.h),
-        // Wrap ممتاز لعرض الـ Chips بشكل متجاوب وينزل لسطر جديد تلقائياً
         Wrap(
           spacing: 8.w,
           runSpacing: 8.h,
-          children: skills
-              .map((skill) => _buildSkillChip(skill))
-              .toList(),
+          children: skills.map((skill) => _buildSkillChip(skill)).toList(),
         ),
       ],
     );
@@ -300,22 +387,14 @@ class _SkillsSectionWidget extends StatelessWidget {
 
   Widget _buildSkillChip(String label) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 12.w,
-        vertical: 8.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: AppColors.kGreyEE,
-        // لون رمادي خفيف كما في التصميم
-        borderRadius: BorderRadius.circular(
-          AppRadius.smallR,
-        ),
+        borderRadius: BorderRadius.circular(AppRadius.smallR),
       ),
       child: Text(
         label,
-        style: Styles.body?.copyWith(
-          color: AppColors.kGrey,
-        ),
+        style: Styles.body?.copyWith(color: AppColors.kGrey),
       ),
     );
   }
