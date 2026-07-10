@@ -14,6 +14,7 @@ import 'package:job_finder/features/home/data/data_source/home_remote_data_sourc
 import 'package:job_finder/features/home/data/repo/home_repo_impl.dart';
 import 'package:job_finder/features/home/domain/uses_cases/home_jobs_use_case.dart';
 import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
+import 'package:job_finder/features/home/presentation/bloc/stats/stats_bloc.dart';
 
 import 'core/utils/di.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
@@ -60,6 +61,11 @@ class MyApp extends StatelessWidget {
                   ),
             ),
             BlocProvider<JobDetailsCubit>(create: (context) => sl<JobDetailsCubit>()),
+            BlocProvider<StatsBloc>(
+              lazy: false,
+              create: (context) =>
+                  sl<StatsBloc>()..add(FetchStatsEvent()),
+            ),
             // يمكنك إضافة المزيد من الـ Providers هنا لاحقاً
             // BlocProvider<AnotherCubit>(create: (context) => AnotherCubit()),
           ],

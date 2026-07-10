@@ -9,8 +9,10 @@ import 'package:job_finder/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:job_finder/features/home/data/data_source/home_remote_data_source.dart';
 import 'package:job_finder/features/home/data/repo/home_repo_impl.dart';
 import 'package:job_finder/features/home/domain/uses_cases/get_job_details_use_case.dart';
+import 'package:job_finder/features/home/domain/uses_cases/get_stats_use_case.dart';
 import 'package:job_finder/features/home/domain/uses_cases/home_jobs_use_case.dart';
 import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
+import 'package:job_finder/features/home/presentation/bloc/stats/stats_bloc.dart';
 
 import '../../features/home/presentation/bloc/detailed_job/job_details_cubit.dart';
 
@@ -64,6 +66,10 @@ Future<void> setUp() async {
     () => GetJobDetailsUseCase(homeRepo: sl<HomeRepoImpl>()),
   );
 
+  sl.registerLazySingleton<GetStatsUseCase>(
+    () => GetStatsUseCase(homeRepo: sl<HomeRepoImpl>()),
+  );
+
   // ==================== 5. Blocs & Cubits ====================
   sl.registerFactory<AuthCubit>(
     () => AuthCubit(
@@ -82,5 +88,8 @@ Future<void> setUp() async {
         () => JobDetailsCubit(
       getJobDetailsUseCase: sl<GetJobDetailsUseCase>(),
     ),
+  );
+  sl.registerFactory<StatsBloc>(
+    () => StatsBloc(getStatsUseCase: sl<GetStatsUseCase>()),
   );
 }
