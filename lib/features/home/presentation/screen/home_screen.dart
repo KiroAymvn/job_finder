@@ -34,13 +34,13 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<HomeJobsBloc, HomeJobsState>(
           builder: (context, state) {
-            return Skeletonizer(
-              enabled: state is HomeJobsLoading,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppSpaces.largeW,
-                  vertical: AppSpaces.smallH,
-                ),
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpaces.largeW,
+                vertical: AppSpaces.smallH,
+              ),
+              child: Skeletonizer(
+                enabled: state is HomeJobsLoading,
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start,
@@ -108,53 +108,3 @@ class HomeScreen extends StatelessWidget {
 }
 // features/home/presentation/widgets/home_header_widget.dart
 
-class SearchBarWidget extends StatelessWidget {
-  const SearchBarWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 12.h,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.kWhite,
-        borderRadius: BorderRadius.circular(
-          AppRadius.mediumR,
-        ),
-        border: Border.all(color: AppColors.kGreyEE),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.kBlack.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(
-            CupertinoIcons.search,
-            color: AppColors.kPrimary,
-            size: 24.sp,
-          ),
-          Gap(12.w),
-          Expanded(
-            child: Text(
-              'Enter job location',
-              style: Styles.body?.copyWith(
-                color: AppColors.kGreyDE,
-              ),
-            ),
-          ),
-          Icon(
-            Icons.tune,
-            color: AppColors.kPrimary,
-            size: 24.sp,
-          ), // Filter Icon
-        ],
-      ),
-    );
-  }
-}

@@ -6,6 +6,7 @@ import 'package:job_finder/core/utils/app_colors.dart';
 import 'package:job_finder/core/utils/app_radius.dart';
 import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/features/home/presentation/screen/home_screen.dart';
+import 'package:job_finder/features/home/presentation/screen/search_screen.dart';
 
 class Root extends StatelessWidget {
   final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
@@ -13,8 +14,9 @@ final String userName;
   Root({super.key, required this.userName});
 
   late final List<Widget> _screens = [
+    SearchScreen(),
      HomeScreen(userName),
-    const Center(child: Text("Search Screen")),
+
     const Center(child: Text("save Screen")),
     const Center(child: Text("Settings Screen")),
   ];
