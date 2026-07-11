@@ -14,6 +14,36 @@ class SuggestedJobModel extends SuggestedJobEntity {
   });
 
   factory SuggestedJobModel.fromJson(Map<String, dynamic> json) {
+    String jobTypeConvert({required String jobType}){
+      if (jobType=="FULL_TIME"){
+        return "Full Time";
+      }else if (jobType=="PART_TIME"){
+        return "Part Time";
+      }
+      else if (jobType=="CONTRACT"){
+        return "Contract";
+      }
+      else if (jobType=="INTERNSHIP"){
+        return "Internship";
+      }
+      else {
+        return jobType;
+      }
+    }
+    String jobLevelConvert({required String jobLevel}) {
+      switch (jobLevel) {
+        case "ENTRY_LEVEL":
+          return "Entry Level";
+        case "MID_LEVEL":
+          return "Mid Level";
+        case "SENIOR_LEVEL":
+          return "Senior Level";
+        case "EXECUTIVE":
+          return "Executive";
+        default:
+          return jobLevel;
+      }
+    }
     return SuggestedJobModel(
       id: json['id'] ?? '',
       title: json['title'] ?? '',
@@ -21,8 +51,8 @@ class SuggestedJobModel extends SuggestedJobEntity {
         json['company'] ?? {},
       ),
       location: json['location'] ?? '',
-      jobType: json['jobType'] ?? '',
-      jobLevel: json['jobLevel'] ?? '',
+      jobLevel: jobLevelConvert(jobLevel: json["jobLevel"]) ?? '',
+      jobType: jobTypeConvert(jobType: json["jobType"])?? '',
       salaryRange: json['salaryRange'] ?? '',
       createdAt: json['createdAt'] ?? '',
     );

@@ -16,7 +16,8 @@ class SuggestedJobCardWidget extends StatelessWidget {
   final int index;
   @override
   Widget build(BuildContext context) {
-    // استخدام ValueNotifier لإدارة حالة زر الحفظ (Bookmark) بدون setState
+
+
     final ValueNotifier<bool> isSavedNotifier = ValueNotifier<bool>(false);
     final item=homeEntity?.homeDataEntity[index];
     final userPostedBy=item?.userPostedByEntity;
