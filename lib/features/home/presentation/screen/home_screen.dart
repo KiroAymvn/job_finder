@@ -19,7 +19,7 @@ import '../../../../core/utils/text_styles.dart';
 import '../widget/browse_category_section.dart';
 import '../widget/find_job_selection.dart';
 import '../widget/home_header_widget.dart';
-import '../widget/suggested_job_card.dart';
+import '../../../shared/job_card_widget.dart';
 
 // استدعاء المكونات (Widgets) التي سنقوم بإنشائها
 
@@ -31,7 +31,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.kWhite,
       body: SafeArea(
         child: BlocBuilder<HomeJobsBloc, HomeJobsState>(
           builder: (context, state) {
@@ -86,7 +85,7 @@ class HomeScreen extends StatelessWidget {
                                   );
                                 },
                                 child:
-                                    SuggestedJobCardWidget(
+                                    JobCardWidget(
                                       homeEntity:
                                           homeEntity,
                                       index: index,

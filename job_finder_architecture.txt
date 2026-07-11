@@ -1,0 +1,1783 @@
+================================================================================
+  JOB FINDER — FLUTTER APP — COMPLETE ARCHITECTURE EXPORT
+  Generated: 2026-07-11
+  Purpose : Give this entire file to an AI agent to recreate the same app
+            with identical architecture, patterns and conventions.
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. TECH STACK & KEY PACKAGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Language         : Dart (Flutter SDK ^3.11.5)
+State Management : flutter_bloc ^9.1.1  (Bloc for complex, Cubit for simple)
+Routing          : go_router ^17.3.0
+HTTP Client      : dio ^5.10.0  (wrapped in DioConsumer)
+Functional       : dartz ^0.10.1  (Either<Failure, T> pattern)
+DI               : get_it ^9.2.1  (service locator, registered in di.dart)
+Secure Storage   : flutter_secure_storage ^10.3.1
+Skeleton Loading : skeletonizer ^2.1.3
+Responsive UI    : flutter_screenutil ^5.9.3  (design size 375×812)
+Spacing Helper   : gap ^3.0.1
+Font             : DMSans (local asset, weights 400/500/600/700)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. FOLDER STRUCTURE (lib/)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+lib/
+├── main.dart
+├── root.dart
+├── core/
+│   ├── database/
+│   │   └── api/
+│   │       ├── api_consumer.dart        ← abstract HTTP interface
+│   │       ├── dio_client.dart          ← Dio instance + interceptors
+│   │       ├── dio_consumer.dart        ← implements ApiConsumer
+│   │       └── end_points.dart         ← all API URL constants
+│   ├── errors/
+│   │   ├── error_model.dart
+│   │   ├── exceptions.dart             ← DioException → typed exceptions
+│   │   └── failure.dart
+│   ├── params/
+│   │   ├── auth_params.dart
+│   │   └── list_all_jobs.dart
+│   └── utils/
+│       ├── app_colors.dart
+│       ├── app_radius.dart
+│       ├── app_router.dart             ← GoRouter config
+│       ├── app_spaces.dart
+│       ├── di.dart                     ← GetIt registrations
+│       ├── images.dart                 ← asset path constants
+│       ├── screen_size.dart
+│       ├── secure_storage_helper.dart
+│       └── text_styles.dart
+└── features/
+    ├── auth/
+    │   ├── data/
+    │   │   ├── data_source/remote_data_source.dart
+    │   │   ├── models/user_model.dart
+    │   │   └── repo/auth_repo_impl.dart
+    │   ├── domain/
+    │   │   ├── entities/user_entity.dart
+    │   │   ├── repo/auth_repo.dart
+    │   │   └── uses_cases/auth_use_case.dart
+    │   └── presentation/
+    │       ├── cubit/
+    │       │   ├── auth_cubit.dart
+    │       │   └── auth_state.dart     ← part of auth_cubit.dart
+    │       ├── screen/
+    │       │   ├── login_screen.dart
+    │       │   └── register_screen.dart
+    │       └── widget/
+    │           └── custom_text_field.dart
+    ├── home/
+    │   ├── data/
+    │   │   ├── data_source/home_remote_data_source.dart
+    │   │   ├── models/
+    │   │   │   ├── home_model.dart
+    │   │   │   ├── job_detail_model.dart
+    │   │   │   ├── stats_model.dart
+    │   │   │   └── sub_models/
+    │   │   │       ├── home_data_model.dart
+    │   │   │       ├── home_pagination_model.dart
+    │   │   │       ├── suggested_job_company_model.dart
+    │   │   │       ├── suggested_job_model.dart
+    │   │   │       ├── total_jobs_model.dart
+    │   │   │       └── user_posted_by_model.dart
+    │   │   └── repo/home_repo_impl.dart
+    │   ├── domain/
+    │   │   ├── entities/
+    │   │   │   ├── home_entity.dart
+    │   │   │   ├── job_details_entity.dart
+    │   │   │   ├── stats_entity.dart
+    │   │   │   └── sub_entity/
+    │   │   │       ├── home_data_entity.dart
+    │   │   │       ├── home_pagination_entity.dart
+    │   │   │       ├── suggested_job_company_entity.dart
+    │   │   │       ├── suggested_job_entity.dart
+    │   │   │       ├── total_jobs_entity.dart
+    │   │   │       └── user_posted_by_entity.dart
+    │   │   ├── repo/home_repo.dart
+    │   │   └── uses_cases/
+    │   │       ├── get_job_details_use_case.dart
+    │   │       ├── get_stats_use_case.dart
+    │   │       └── home_jobs_use_case.dart
+    │   └── presentation/
+    │       ├── bloc/
+    │       │   ├── detailed_job/
+    │       │   │   ├── job_details_cubit.dart
+    │       │   │   └── job_details_state.dart
+    │       │   ├── home/
+    │       │   │   ├── home_jobs_bloc.dart
+    │       │   │   ├── home_jobs_event.dart  ← part of home_jobs_bloc
+    │       │   │   └── home_jobs_state.dart  ← part of home_jobs_bloc
+    │       │   └── stats/
+    │       │       ├── stats_bloc.dart
+    │       │       ├── stats_event.dart      ← part of stats_bloc
+    │       │       └── stats_state.dart      ← part of stats_bloc
+    │       ├── screen/
+    │       │   ├── home_screen.dart
+    │       │   └── get_job_by_slug_screen.dart
+    │       └── widget/
+    │           ├── browse_category_section.dart
+    │           ├── find_job_selection.dart
+    │           ├── home_header_widget.dart
+    │           └── suggested_job_card.dart
+    ├── onboarding/
+    │   └── presentation/screen/
+    │       ├── splash_screen.dart
+    │       └── on_bording_screen.dart
+    └── shared/
+        ├── custom_button.dart
+        └── scaffold_message.dart
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. ARCHITECTURE PATTERN — CLEAN ARCHITECTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE: Each feature has exactly 3 layers: data / domain / presentation
+
+DOMAIN LAYER (pure Dart, no Flutter/framework imports)
+  • entities/         ← plain Dart classes, no fromJson, no Flutter
+  • repo/             ← abstract class (interface) returning Either<Failure,T>
+  • uses_cases/       ← single-responsibility class calling the repo
+
+DATA LAYER (implements domain)
+  • data_source/      ← calls DioConsumer, returns model or throws ServerException
+  • models/           ← extends entity, adds fromJson factory
+  • repo/             ← implements abstract repo, wraps call in try/catch
+
+PRESENTATION LAYER (Flutter)
+  • bloc/ or cubit/   ← handles events, emits states
+  • screen/           ← BlocBuilder/BlocConsumer, shows UI
+  • widget/           ← reusable UI components
+
+DATA FLOW:
+  UI → Bloc/Cubit → UseCase → RepoImpl → DataSource → DioConsumer → API
+  API → DataSource → Model.fromJson → RepoImpl → Either.right → Bloc → UI
+
+EITHER PATTERN (dartz):
+  - Success: return right(entity)
+  - Failure: return left(Failure(errMessage: e.errorModel.errorMessage))
+  - In Bloc: failureOrSuccess.fold( (f) => emit(Failed), (s) => emit(Success) )
+
+SKELETONIZER PATTERN:
+  - Define realistic dummy data (same field lengths as real data)
+  - Choose displayData = isLoading ? dummyData : realData
+  - Wrap UI in Skeletonizer(enabled: isLoading, child: ...)
+  - Never show an empty list during loading — use dummy list items
+
+DI PATTERN (get_it):
+  - registerLazySingleton for: DioConsumer, DataSources, Repos, UseCases
+  - registerFactory for: Blocs, Cubits (new instance each time)
+  - All registered in setUp() called from main()
+  - Accessed via: sl<TypeName>()
+
+BLOC vs CUBIT:
+  - Use Bloc when: multiple events needed (e.g. HomeJobsBloc with search)
+  - Use Cubit when: simple single operation (e.g. JobDetailsCubit, AuthCubit)
+  - Bloc states/events are part files using `part of`
+
+API ENDPOINT RULE:
+  - Base URL ends with /  e.g. "https://api.example.com/api/v2/"
+  - Endpoint paths do NOT start with /  e.g. "job/all" NOT "/job/all"
+  - Using leading slash causes Dio to strip the base path!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. DESIGN TOKENS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PRIMARY COLOR  : #0D988C (teal/green)
+BACKGROUND     : #FFFFFF (white)
+BLACK          : #000000
+GREEN          : #46CC6B
+BLUE           : #6CA1F3
+GREY (text)    : #71767C
+GREY LIGHT     : #99A1AF
+GREY EE        : #EEEEEE
+GREY F3        : #F3F4F6
+GREY DE        : #DEDEDE
+WHITE ED       : #EDEDED
+RED            : #FC4646
+RED ALT        : #F15249
+
+FONT FAMILY : DMSans
+  smallBody  : 10sp, w500, kGrey99
+  body       : 12sp, normal, kGrey
+  smallTitle : 14sp, w600, kBlack
+  mediumTitle: 16sp, w600, kBlack
+  largeTitle : 20sp, bold,  kBlack
+  buttonText : 16sp, w600, kWhite
+
+RADIUS:
+  smallR  : 10.r
+  mediumR : 16.r
+  largeR  : 24.r
+
+SPACING:
+  smallH : 11.h  | largeH : 36.h  | mediumH : 19.h
+  smallW : 10.w  | largeW : 25.w
+
+SCREEN UTIL design size: 375 × 812
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. ROUTING (go_router)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"/"                   → SplashScreen
+"/OnBoarding"         → OnBoardingScreen
+"/register"           → RegisterScreen
+"/login"              → LoginScreen
+"/root"               → Root(userName: state.extra)     ← bottom nav shell
+"/getJobBySlugScreen" → GetJobBySlugScreen(jobSlug: state.extra)
+
+Navigation helpers used: GoRouter.of(context).push(), .pushReplacement(), context.pop()
+Pass data via `extra` parameter on GoRoute.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. FULL SOURCE CODE — ALL DART FILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Each file is shown as:
+  ── FILE: relative/path/to/file.dart ──
+  [full file content]
+
+──────────────────────────────────────────────────────────
+FILE: pubspec.yaml
+──────────────────────────────────────────────────────────
+name: job_finder
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_screenutil: ^5.9.3
+  flutter_svg: ^2.3.0
+  flutter_bloc: ^9.1.1
+  go_router: ^17.3.0
+  device_preview: ^1.3.1
+  persistent_bottom_nav_bar_v2: ^6.3.2
+  gap: ^3.0.1
+  dio: ^5.10.0
+  dartz: ^0.10.1
+  flutter_secure_storage: ^10.3.1
+  skeletonizer: ^2.1.3
+  get_it: ^9.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/countries.json
+    - assets/jobRoles.json
+    - assets/images/
+    - assets/images/icones/
+    - assets/images/logo/
+  fonts:
+    - family: DMSans
+      fonts:
+        - asset: assets/fonts/DMSans-Regular.ttf
+        - asset: assets/fonts/DMSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/DMSans-Bold.ttf
+          weight: 700
+
+──────────────────────────────────────────────────────────
+FILE: lib/main.dart
+──────────────────────────────────────────────────────────
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:job_finder/core/params/list_all_jobs.dart';
+import 'package:job_finder/core/utils/app_router.dart';
+import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
+import 'package:job_finder/features/home/presentation/bloc/stats/stats_bloc.dart';
+
+import 'core/utils/di.dart';
+import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/home/presentation/bloc/detailed_job/job_details_cubit.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setUp();
+  runApp(DevicePreview(enabled: false, builder: (context) => const MyApp()));
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<AuthCubit>(create: (context) => sl<AuthCubit>()),
+            BlocProvider<HomeJobsBloc>(
+              lazy: false,
+              create: (context) => sl<HomeJobsBloc>()
+                ..add(HomeJobsSearchEvent(params: ListAllJobsParams())),
+            ),
+            BlocProvider<JobDetailsCubit>(
+              create: (context) => sl<JobDetailsCubit>()),
+            BlocProvider<StatsBloc>(
+              lazy: false,
+              create: (context) => sl<StatsBloc>()..add(FetchStatsEvent()),
+            ),
+          ],
+          child: MaterialApp.router(
+            locale: DevicePreview.locale(context),
+            builder: DevicePreview.appBuilder,
+            debugShowCheckedModeBanner: false,
+            routerConfig: AppRouter.router,
+          ),
+        );
+      },
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/root.dart
+──────────────────────────────────────────────────────────
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:job_finder/core/utils/app_colors.dart';
+import 'package:job_finder/core/utils/app_radius.dart';
+import 'package:job_finder/core/utils/app_spaces.dart';
+import 'package:job_finder/features/home/presentation/screen/home_screen.dart';
+
+class Root extends StatelessWidget {
+  final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
+  final String userName;
+  Root({super.key, required this.userName});
+
+  late final List<Widget> _screens = [
+    HomeScreen(userName),
+    const Center(child: Text("Search Screen")),
+    const Center(child: Text("Save Screen")),
+    const Center(child: Text("Settings Screen")),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBody: true,
+      body: ValueListenableBuilder<int>(
+        valueListenable: _currentIndex,
+        builder: (context, index, child) {
+          return IndexedStack(index: index, children: _screens);
+        },
+      ),
+      bottomNavigationBar: _buildFloatingNavBar(),
+    );
+  }
+
+  Widget _buildFloatingNavBar() {
+    return ValueListenableBuilder<int>(
+      valueListenable: _currentIndex,
+      builder: (context, currentIndex, child) {
+        return Container(
+          height: 70.h,
+          margin: EdgeInsets.only(
+            left: AppSpaces.smallW,
+            right: AppSpaces.smallW,
+            bottom: AppSpaces.smallH * 1.5,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.kWhite,
+            borderRadius: BorderRadius.circular(AppRadius.largeR),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.kBlack.withOpacity(0.08),
+                blurRadius: 20, spreadRadius: 5, offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpaces.smallH),
+            child: Row(
+              children: [
+                _buildNavItem(0, CupertinoIcons.home, "Home", currentIndex),
+                _buildNavItem(1, CupertinoIcons.search, "Search", currentIndex),
+                _buildNavItem(2, Icons.favorite, "Save", currentIndex),
+                _buildNavItem(3, CupertinoIcons.settings, "Settings", currentIndex),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label, int currentIndex) {
+    final isSelected = currentIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _currentIndex.value = index,
+        behavior: HitTestBehavior.opaque,
+        child: Center(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.kPrimary.withOpacity(0.1) : Colors.transparent,
+              borderRadius: BorderRadius.circular(AppRadius.mediumR),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon,
+                  color: isSelected ? AppColors.kPrimary : AppColors.kGrey99,
+                  size: 24.sp),
+                if (isSelected)
+                  Flexible(
+                    child: AnimatedSize(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 6.w),
+                          child: Text(label,
+                            style: TextStyle(
+                              color: AppColors.kPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20.sp,
+                              fontFamily: "DMSans"),
+                            maxLines: 1),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/database/api/api_consumer.dart
+──────────────────────────────────────────────────────────
+abstract class ApiConsumer {
+  Future<dynamic> get(String path, {Object? data, Map<String, dynamic>? queryParameters});
+  Future<dynamic> post(String path, {dynamic data, Map<String, dynamic>? queryParameters, bool isFormData = false});
+  Future<dynamic> patch(String path, {dynamic data, Map<String, dynamic>? queryParameters, bool isFormData = false});
+  Future<dynamic> delete(String path, {Object? data, Map<String, dynamic>? queryParameters});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/database/api/dio_client.dart
+──────────────────────────────────────────────────────────
+import 'package:dio/dio.dart';
+import 'package:job_finder/core/utils/secure_storage_helper.dart';
+
+class DioClient {
+  final Dio _dio = Dio(BaseOptions(
+    baseUrl: 'https://YOUR_API_BASE_URL/api',
+    headers: {"Content-Type": 'application/json'},
+  ));
+
+  DioClient() {
+    _dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final storageHelper = await SecureStorageHelper.getInstance();
+        final String? token = await storageHelper?.getData(key: "token");
+        if (token != null && token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+        return handler.next(options);
+      },
+    ));
+  }
+
+  Dio get dio => _dio;
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/database/api/dio_consumer.dart
+──────────────────────────────────────────────────────────
+import 'package:dio/dio.dart';
+import '../../errors/exceptions.dart';
+import 'api_consumer.dart';
+import 'end_points.dart';
+
+class DioConsumer extends ApiConsumer {
+  final Dio dio;
+
+  DioConsumer({required this.dio}) {
+    dio.options.baseUrl = AppEndPoint.baserUrl;
+  }
+
+  @override
+  Future get(String path, {Object? data, Map<String, dynamic>? queryParameters}) async {
+    try {
+      var res = await dio.get(path, data: data, queryParameters: queryParameters);
+      return res.data;
+    } on DioException catch (e) { handleDioException(e); }
+  }
+
+  @override
+  Future post(String path, {dynamic data, Map<String, dynamic>? queryParameters, bool isFormData = false}) async {
+    try {
+      var res = await dio.post(path,
+        data: isFormData ? FormData.fromMap(data) : data,
+        queryParameters: queryParameters);
+      return res.data;
+    } on DioException catch (e) { handleDioException(e); }
+  }
+
+  @override
+  Future patch(String path, {dynamic data, Map<String, dynamic>? queryParameters, bool isFormData = false}) async {
+    try {
+      var res = await dio.patch(path,
+        data: isFormData ? FormData.fromMap(data) : data,
+        queryParameters: queryParameters);
+      return res.data;
+    } on DioException catch (e) { handleDioException(e); }
+  }
+
+  @override
+  Future delete(String path, {Object? data, Map<String, dynamic>? queryParameters}) async {
+    try {
+      var res = await dio.delete(path, data: data, queryParameters: queryParameters);
+      return res.data;
+    } on DioException catch (e) { handleDioException(e); }
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/database/api/end_points.dart
+──────────────────────────────────────────────────────────
+// IMPORTANT: base URL must end with /
+// IMPORTANT: endpoint paths must NOT start with /
+// (Dio treats a leading / as absolute, stripping the base path)
+class AppEndPoint {
+  static const String baserUrl = "https://next-step-api.onrender.com/api/v2/";
+  static const String register    = "auth/register";
+  static const String login       = "auth/login";
+  static const String getMyProfile = "auth/me";
+  static const String listAllJobs = "/job/all";
+  static const String getJobDetails = "/job/detail";
+  static const String states      = "/stats";
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/errors/error_model.dart
+──────────────────────────────────────────────────────────
+class ErrorModel {
+  final int status;
+  final String errorMessage;
+  ErrorModel({required this.status, required this.errorMessage});
+  factory ErrorModel.fromJson(Map jsonData) {
+    return ErrorModel(
+      errorMessage: jsonData["message"],
+      status: jsonData["statusCode"],
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/errors/exceptions.dart
+──────────────────────────────────────────────────────────
+import 'package:dio/dio.dart';
+import 'error_model.dart';
+
+class ServerException implements Exception {
+  final ErrorModel errorModel;
+  ServerException(this.errorModel);
+}
+class CacheExeption implements Exception {
+  final String errorMessage;
+  CacheExeption({required this.errorMessage});
+}
+class BadCertificateException extends ServerException { BadCertificateException(super.errorModel); }
+class ConnectionTimeoutException extends ServerException { ConnectionTimeoutException(super.errorModel); }
+class BadResponseException extends ServerException { BadResponseException(super.errorModel); }
+class ReceiveTimeoutException extends ServerException { ReceiveTimeoutException(super.errorModel); }
+class ConnectionErrorException extends ServerException { ConnectionErrorException(super.errorModel); }
+class SendTimeoutException extends ServerException { SendTimeoutException(super.errorModel); }
+class UnauthorizedException extends ServerException { UnauthorizedException(super.errorModel); }
+class ForbiddenException extends ServerException { ForbiddenException(super.errorModel); }
+class NotFoundException extends ServerException { NotFoundException(super.errorModel); }
+class CofficientException extends ServerException { CofficientException(super.errorModel); }
+class CancelException extends ServerException { CancelException(super.errorModel); }
+class UnknownException extends ServerException { UnknownException(super.errorModel); }
+
+handleDioException(DioException e) {
+  switch (e.type) {
+    case DioExceptionType.connectionError:
+      throw ConnectionErrorException(ErrorModel.fromJson(e.response!.data));
+    case DioExceptionType.badCertificate:
+      throw BadCertificateException(ErrorModel.fromJson(e.response!.data));
+    case DioExceptionType.connectionTimeout:
+      throw ConnectionTimeoutException(ErrorModel.fromJson(e.response!.data));
+    case DioExceptionType.receiveTimeout:
+      throw ReceiveTimeoutException(ErrorModel.fromJson(e.response!.data));
+    case DioExceptionType.sendTimeout:
+      throw SendTimeoutException(ErrorModel.fromJson(e.response!.data));
+    case DioExceptionType.badResponse:
+      switch (e.response?.statusCode) {
+        case 400: throw BadResponseException(ErrorModel.fromJson(e.response!.data));
+        case 401: throw UnauthorizedException(ErrorModel.fromJson(e.response!.data));
+        case 403: throw ForbiddenException(ErrorModel.fromJson(e.response!.data));
+        case 404: throw NotFoundException(ErrorModel.fromJson(e.response!.data));
+        case 409: throw CofficientException(ErrorModel.fromJson(e.response!.data));
+        case 504: throw BadResponseException(ErrorModel(status: 504, errorMessage: e.response!.data));
+      }
+    case DioExceptionType.cancel:
+      throw CancelException(ErrorModel(errorMessage: e.toString(), status: 500));
+    case DioExceptionType.unknown:
+      throw UnknownException(ErrorModel(errorMessage: e.toString(), status: 500));
+    default:
+      throw UnknownException(ErrorModel(errorMessage: e.toString(), status: 500));
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/errors/failure.dart
+──────────────────────────────────────────────────────────
+class Failure {
+  final String errMessage;
+  Failure({required this.errMessage});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/params/auth_params.dart
+──────────────────────────────────────────────────────────
+abstract class AuthParams {
+  final String email;
+  final String password;
+  AuthParams({required this.email, required this.password});
+}
+
+class LoginParams extends AuthParams {
+  LoginParams({required super.email, required super.password});
+}
+
+class RegisterParams extends AuthParams {
+  RegisterParams({
+    required super.email, required super.password,
+    required this.fullName, required this.phoneNumber,
+    required this.address, required this.gender, required this.role,
+  });
+  final String fullName;
+  final String phoneNumber;
+  final String address;
+  final String gender;
+  final String role;
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/params/list_all_jobs.dart
+──────────────────────────────────────────────────────────
+enum JobType {
+  fullTime('FULL_TIME'), partTime('PART_TIME'), contract('CONTRACT');
+  final String value;
+  const JobType(this.value);
+}
+
+enum JobLevel {
+  entryLevel('ENTRY_LEVEL'), midLevel('MID_LEVEL'), seniorLevel('SENIOR_LEVEL');
+  final String value;
+  const JobLevel(this.value);
+}
+
+class ListAllJobsParams {
+  final int? page;
+  final int? limit;
+  final JobType? jobType;
+  final JobLevel? jobLevel;
+  final String? location;
+  final String? search;
+
+  ListAllJobsParams({this.page, this.limit, this.jobType, this.jobLevel, this.location, this.search});
+
+  Map<String, dynamic> toMap() {
+    final Map<String, dynamic> map = {};
+    if (page != null) map['page'] = page;
+    if (limit != null) map['limit'] = limit;
+    if (jobType != null) map['jobType'] = jobType!.value;
+    if (jobLevel != null) map['jobLevel'] = jobLevel!.value;
+    if (location != null) map['location'] = location;
+    if (search != null) map['search'] = search;
+    return map;
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/utils/app_colors.dart
+──────────────────────────────────────────────────────────
+import 'package:flutter/widgets.dart';
+
+class AppColors {
+  static const Color kPrimary  = Color(0xff0D988C);
+  static const Color kBlack    = Color(0xff000000);
+  static const Color kGreen    = Color(0xff46CC6B);
+  static const Color kBlue     = Color(0xff6CA1F3);
+  static const Color kGreyDE   = Color(0xffDEDEDE);
+  static const Color kGrey     = Color(0xff71767C);
+  static const Color kGreyEE   = Color(0xffEEEEEE);
+  static const Color kGreyF3   = Color(0xffF3F4F6);
+  static const Color kGrey99   = Color(0xff99A1AF);
+  static const Color kWhite    = Color(0xffFFFFFF);
+  static const Color kWhiteED  = Color(0xffEDEDED);
+  static const Color kRed      = Color(0xffFC4646);
+  static const Color kRed1     = Color(0xffF15249);
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/utils/app_radius.dart
+──────────────────────────────────────────────────────────
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+class AppRadius {
+  static final double smallR  = 10.r;
+  static final double mediumR = 16.r;
+  static final double largeR  = 24.r;
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/utils/app_spaces.dart
+──────────────────────────────────────────────────────────
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+class AppSpaces {
+  static final double smallH  = 11.h;
+  static final double mediumH = 19.h;
+  static final double largeH  = 36.h;
+  static final double smallW  = 10.w;
+  static final double largeW  = 25.w;
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/utils/text_styles.dart
+──────────────────────────────────────────────────────────
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:job_finder/core/utils/app_colors.dart';
+
+abstract class Styles {
+  static final smallTitle  = TextStyle(fontWeight: FontWeight.w600, color: AppColors.kBlack,  fontSize: 14.sp, fontFamily: "DMSans");
+  static final mediumTitle = TextStyle(fontWeight: FontWeight.w600, color: AppColors.kBlack,  fontSize: 16.sp, fontFamily: "DMSans");
+  static final largeTitle  = TextStyle(fontWeight: FontWeight.bold, color: AppColors.kBlack,  fontSize: 20.sp, fontFamily: "DMSans");
+  static final smallBody   = TextStyle(fontWeight: FontWeight.w500, color: AppColors.kGrey99, fontSize: 10.sp, fontFamily: "DMSans");
+  static final body        = TextStyle(fontWeight: FontWeight.normal,color: AppColors.kGrey,  fontSize: 12.sp, fontFamily: "DMSans");
+  static final buttonText  = TextStyle(fontWeight: FontWeight.w600, color: AppColors.kWhite,  fontSize: 16.sp, fontFamily: "DMSans");
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/utils/app_router.dart
+──────────────────────────────────────────────────────────
+import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
+import 'package:job_finder/features/onboarding/presentation/screen/on_bording_screen.dart';
+import 'package:job_finder/root.dart';
+import '../../features/auth/presentation/screen/login_screen.dart';
+import '../../features/auth/presentation/screen/register_screen.dart';
+import '../../features/home/presentation/screen/get_job_by_slug_screen.dart';
+import '../../features/home/presentation/screen/home_screen.dart';
+import '../../features/onboarding/presentation/screen/splash_screen.dart';
+
+abstract class AppRouter {
+  static final kSplash             = "/";
+  static final kOnBoarding         = "/OnBoarding";
+  static final kRegister           = "/register";
+  static final kLogin              = "/login";
+  static final kRoot               = "/root";
+  static final kGetJobBySlugScreen = "/getJobBySlugScreen";
+
+  static final GoRouter router = GoRouter(
+    routes: <RouteBase>[
+      GoRoute(path: kSplash,             builder: (c, s) => const SplashScreen()),
+      GoRoute(path: kOnBoarding,         builder: (c, s) => OnBoardingScreen()),
+      GoRoute(path: kRegister,           builder: (c, s) => const RegisterScreen()),
+      GoRoute(path: kLogin,              builder: (c, s) => const LoginScreen()),
+      GoRoute(path: kRoot,               builder: (c, s) => Root(userName: s.extra.toString())),
+      GoRoute(path: kGetJobBySlugScreen, builder: (c, s) => GetJobBySlugScreen(jobSlug: s.extra.toString())),
+    ],
+  );
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/utils/secure_storage_helper.dart
+──────────────────────────────────────────────────────────
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+class SecureStorageHelper {
+  SecureStorageHelper._();
+  static SecureStorageHelper? _instance;
+  static Future<SecureStorageHelper>? getInstance() async {
+    _instance ??= SecureStorageHelper._();
+    return _instance!;
+  }
+  static AndroidOptions _getAndroidOptions() =>
+      const AndroidOptions(encryptedSharedPreferences: true);
+  final FlutterSecureStorage _storage = FlutterSecureStorage(aOptions: _getAndroidOptions());
+  Future<void> assignData({required String key, required String value}) async {
+    await _storage.write(key: key, value: value);
+  }
+  Future<String?> getData({required String key}) async => await _storage.read(key: key);
+  Future<void> clearCache({required String key}) async => await _storage.delete(key: key);
+  Future<void> clearAllCache() async => await _storage.deleteAll();
+}
+
+class AppSecureKey {
+  static final String token    = "token";
+  static final String userName = "userName";
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/core/utils/di.dart
+──────────────────────────────────────────────────────────
+import 'package:get_it/get_it.dart';
+import 'package:job_finder/core/database/api/dio_client.dart';
+import 'package:job_finder/core/database/api/dio_consumer.dart';
+import 'package:job_finder/features/auth/data/data_source/remote_data_source.dart';
+import 'package:job_finder/features/auth/data/repo/auth_repo_impl.dart';
+import 'package:job_finder/features/auth/domain/uses_cases/auth_use_case.dart';
+import 'package:job_finder/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:job_finder/features/home/data/data_source/home_remote_data_source.dart';
+import 'package:job_finder/features/home/data/repo/home_repo_impl.dart';
+import 'package:job_finder/features/home/domain/uses_cases/get_job_details_use_case.dart';
+import 'package:job_finder/features/home/domain/uses_cases/get_stats_use_case.dart';
+import 'package:job_finder/features/home/domain/uses_cases/home_jobs_use_case.dart';
+import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
+import 'package:job_finder/features/home/presentation/bloc/stats/stats_bloc.dart';
+import '../../features/home/presentation/bloc/detailed_job/job_details_cubit.dart';
+
+final GetIt sl = GetIt.instance;
+
+Future<void> setUp() async {
+  // 1. Core & Network
+  sl.registerLazySingleton<DioConsumer>(() => DioConsumer(dio: DioClient().dio));
+
+  // 2. Data Sources
+  sl.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSource(api: sl<DioConsumer>()));
+  sl.registerLazySingleton<HomeRemoteDataSource>(() => HomeRemoteDataSource(dioConsumer: sl<DioConsumer>()));
+
+  // 3. Repositories
+  sl.registerLazySingleton<AuthRepoImpl>(() => AuthRepoImpl(remoteDataSource: sl<AuthRemoteDataSource>()));
+  sl.registerLazySingleton<HomeRepoImpl>(() => HomeRepoImpl(homeRemoteDataSource: sl<HomeRemoteDataSource>()));
+
+  // 4. Use Cases
+  sl.registerLazySingleton<LoginUserCase>(() => LoginUserCase(authRepo: sl<AuthRepoImpl>()));
+  sl.registerLazySingleton<RegisterUseCase>(() => RegisterUseCase(authRepo: sl<AuthRepoImpl>()));
+  sl.registerLazySingleton<HomeJobsUseCase>(() => HomeJobsUseCase(homeRepo: sl<HomeRepoImpl>()));
+  sl.registerLazySingleton<GetJobDetailsUseCase>(() => GetJobDetailsUseCase(homeRepo: sl<HomeRepoImpl>()));
+  sl.registerLazySingleton<GetStatsUseCase>(() => GetStatsUseCase(homeRepo: sl<HomeRepoImpl>()));
+
+  // 5. Blocs & Cubits
+  sl.registerFactory<AuthCubit>(() => AuthCubit(registerUseCase: sl<RegisterUseCase>(), loginUseCase: sl<LoginUserCase>()));
+  sl.registerFactory<HomeJobsBloc>(() => HomeJobsBloc(homeJobsUseCase: sl<HomeJobsUseCase>(), jobDetailsUseCase: sl<GetJobDetailsUseCase>()));
+  sl.registerFactory<JobDetailsCubit>(() => JobDetailsCubit(getJobDetailsUseCase: sl<GetJobDetailsUseCase>()));
+  sl.registerFactory<StatsBloc>(() => StatsBloc(getStatsUseCase: sl<GetStatsUseCase>()));
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/auth/domain/entities/user_entity.dart
+──────────────────────────────────────────────────────────
+class UserEntity {
+  final bool success;
+  final String message;
+  final String timeStamp;
+  final UserDataEntity dataEntity;
+  const UserEntity({required this.success, required this.message, required this.timeStamp, required this.dataEntity});
+}
+
+class UserDataEntity {
+  final String token;
+  final String id;
+  final String email;
+  final String name;
+  final bool isCompleted;
+  const UserDataEntity({required this.token, required this.id, required this.email, required this.name, required this.isCompleted});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/auth/domain/repo/auth_repo.dart
+──────────────────────────────────────────────────────────
+import 'package:dartz/dartz.dart';
+import 'package:job_finder/core/errors/failure.dart';
+import 'package:job_finder/core/params/auth_params.dart';
+import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
+
+abstract class AuthRepo {
+  Future<Either<Failure, UserEntity>> register({required RegisterParams registerParams});
+  Future<Either<Failure, UserEntity>> login({required LoginParams loginParams});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/auth/domain/uses_cases/auth_use_case.dart
+──────────────────────────────────────────────────────────
+import 'package:dartz/dartz.dart';
+import 'package:job_finder/core/errors/failure.dart';
+import 'package:job_finder/core/params/auth_params.dart';
+import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
+import 'package:job_finder/features/auth/domain/repo/auth_repo.dart';
+
+class RegisterUseCase {
+  final AuthRepo authRepo;
+  RegisterUseCase({required this.authRepo});
+  Future<Either<Failure, UserEntity>> call({required RegisterParams registerParams}) async {
+    return await authRepo.register(registerParams: registerParams);
+  }
+}
+
+class LoginUserCase {
+  final AuthRepo authRepo;
+  LoginUserCase({required this.authRepo});
+  Future<Either<Failure, UserEntity>> call({required LoginParams loginParams}) async {
+    return await authRepo.login(loginParams: loginParams);
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/auth/data/models/user_model.dart
+──────────────────────────────────────────────────────────
+import '../../domain/entities/user_entity.dart';
+
+class UserModel extends UserEntity {
+  const UserModel({required super.success, required super.message, required super.timeStamp, required super.dataEntity});
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      timeStamp: json['timestamp'] ?? '',
+      dataEntity: UserDataModel.fromJson(json['data'] ?? {}),
+    );
+  }
+}
+
+class UserDataModel extends UserDataEntity {
+  const UserDataModel({required super.token, required super.id, required super.email, required super.name, required super.isCompleted});
+  factory UserDataModel.fromJson(Map<String, dynamic> json) {
+    return UserDataModel(
+      token: json['token'] ?? '',
+      id: json['id'] ?? '',
+      email: json['email'] ?? '',
+      name: json['name'] ?? json['fullName'] ?? 'Unknown User',
+      isCompleted: json['isCompleted'] ?? false,
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/auth/data/data_source/remote_data_source.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/core/database/api/dio_consumer.dart';
+import 'package:job_finder/core/database/api/end_points.dart';
+import 'package:job_finder/core/params/auth_params.dart';
+import 'package:job_finder/core/utils/secure_storage_helper.dart';
+import 'package:job_finder/features/auth/data/models/user_model.dart';
+import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
+
+class AuthRemoteDataSource {
+  final DioConsumer api;
+  AuthRemoteDataSource({required this.api});
+
+  Future<UserEntity?> register({required RegisterParams registerParams}) async {
+    final response = await api.post(AppEndPoint.register, data: {
+      "email": registerParams.email, "password": registerParams.password,
+      "fullName": registerParams.fullName, "phoneNumber": registerParams.phoneNumber,
+      "address": registerParams.address, "gender": registerParams.gender,
+      "role": registerParams.role,
+    });
+    final UserModel userModel = UserModel.fromJson(response);
+    final secure = await SecureStorageHelper.getInstance();
+    secure?.assignData(key: AppSecureKey.token, value: userModel.dataEntity.token);
+    secure?.assignData(key: AppSecureKey.userName, value: userModel.dataEntity.name);
+    return userModel;
+  }
+
+  Future<UserEntity?> login({required LoginParams loginParams}) async {
+    final response = await api.post(AppEndPoint.login, data: {
+      "email": loginParams.email, "password": loginParams.password,
+    });
+    final UserModel userModel = UserModel.fromJson(response);
+    final secure = await SecureStorageHelper.getInstance();
+    secure?.assignData(key: AppSecureKey.token, value: userModel.dataEntity.token);
+    secure?.assignData(key: AppSecureKey.userName, value: userModel.dataEntity.name);
+    return userModel;
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/auth/data/repo/auth_repo_impl.dart
+──────────────────────────────────────────────────────────
+import 'package:dartz/dartz.dart';
+import 'package:job_finder/core/errors/exceptions.dart';
+import 'package:job_finder/core/errors/failure.dart';
+import 'package:job_finder/core/params/auth_params.dart';
+import 'package:job_finder/features/auth/data/data_source/remote_data_source.dart';
+import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
+import 'package:job_finder/features/auth/domain/repo/auth_repo.dart';
+
+class AuthRepoImpl implements AuthRepo {
+  final AuthRemoteDataSource remoteDataSource;
+  AuthRepoImpl({required this.remoteDataSource});
+
+  @override
+  Future<Either<Failure, UserEntity>> register({required RegisterParams registerParams}) async {
+    try {
+      final userEntity = await remoteDataSource.register(registerParams: registerParams);
+      return right(userEntity!);
+    } on ServerException catch (e) {
+      return left(Failure(errMessage: e.errorModel.errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> login({required LoginParams loginParams}) async {
+    try {
+      final UserEntity? userEntity = await remoteDataSource.login(loginParams: loginParams);
+      return right(userEntity!);
+    } on ServerException catch (e) {
+      return left(Failure(errMessage: e.errorModel.errorMessage));
+    }
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/auth/presentation/cubit/auth_cubit.dart  +  auth_state.dart
+──────────────────────────────────────────────────────────
+// auth_state.dart (part file)
+part of 'auth_cubit.dart';
+@immutable sealed class AuthState {}
+final class AuthInitial extends AuthState {}
+final class AuthLoading extends AuthState {}
+final class AuthSuccess extends AuthState {
+  final UserEntity userEntity;
+  AuthSuccess({required this.userEntity});
+}
+final class AuthFailed extends AuthState {
+  final String errorMessage;
+  AuthFailed({required this.errorMessage});
+}
+
+// auth_cubit.dart
+import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
+import 'package:job_finder/core/params/auth_params.dart';
+import 'package:job_finder/features/auth/domain/entities/user_entity.dart';
+import 'package:job_finder/features/auth/domain/uses_cases/auth_use_case.dart';
+import 'package:meta/meta.dart';
+import '../../../../core/utils/app_colors.dart';
+import '../../../shared/scaffold_message.dart';
+part 'auth_state.dart';
+
+class AuthCubit extends Cubit<AuthState> {
+  AuthCubit({required this.registerUseCase, required this.loginUseCase}) : super(AuthInitial());
+  final RegisterUseCase registerUseCase;
+  final LoginUserCase loginUseCase;
+
+  Future<void> registerEitherFailureOrUser({required RegisterParams registerParams}) async {
+    emit(AuthLoading());
+    final failureOrUser = await registerUseCase.call(registerParams: registerParams);
+    failureOrUser.fold(
+      (failure) => emit(AuthFailed(errorMessage: failure.errMessage)),
+      (user) => emit(AuthSuccess(userEntity: user)),
+    );
+  }
+
+  Future<void> loginFaileOrSuccess({required LoginParams loginParams}) async {
+    emit(AuthLoading());
+    final failOrUser = await loginUseCase.call(loginParams: loginParams);
+    failOrUser.fold(
+      (failure) => emit(AuthFailed(errorMessage: failure.errMessage)),
+      (user) => emit(AuthSuccess(userEntity: user)),
+    );
+  }
+
+  void onSuccessAuth(BuildContext context, {required String message, required String userName}) {
+    scaffoldMessengerError(context, message, color: AppColors.kPrimary);
+    GoRouter.of(context).pushReplacement("/root", extra: userName);
+  }
+
+  void onFailureAuth(BuildContext context, {required String message}) {
+    scaffoldMessengerError(context, message, color: AppColors.kPrimary);
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/entities/sub_entity/user_posted_by_entity.dart
+──────────────────────────────────────────────────────────
+class UserPostedByEntity {
+  final String id;
+  final String fullName;
+  final String email;
+  final String? imageUrl;
+  final String role;
+  UserPostedByEntity({required this.id, required this.fullName, required this.email, required this.imageUrl, required this.role});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/entities/sub_entity/home_data_entity.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/sub_entity/user_posted_by_entity.dart';
+class HomeDataEntity {
+  final String id, title, experience, jobLevel, jobType, location, salaryRange, slug;
+  final String? category;
+  final String createdAt, updatedAt;
+  final bool isFavorite;
+  final UserPostedByEntity userPostedByEntity;
+  HomeDataEntity({
+    required this.id, required this.title, required this.experience,
+    required this.jobLevel, required this.jobType, required this.location,
+    required this.salaryRange, required this.slug, required this.category,
+    required this.createdAt, required this.updatedAt, required this.isFavorite,
+    required this.userPostedByEntity,
+  });
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/entities/sub_entity/home_pagination_entity.dart
+──────────────────────────────────────────────────────────
+class HomePaginationEntity {
+  final int maxCount, currentPage, totalPages;
+  final bool hasNext, hasPrevious;
+  HomePaginationEntity({required this.maxCount, required this.currentPage, required this.totalPages, required this.hasNext, required this.hasPrevious});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/entities/home_entity.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/sub_entity/home_data_entity.dart';
+import 'package:job_finder/features/home/domain/entities/sub_entity/home_pagination_entity.dart';
+class HomeEntity {
+  final bool isSuccess;
+  final List<HomeDataEntity> homeDataEntity;
+  final HomePaginationEntity homePaginationEntity;
+  HomeEntity({required this.isSuccess, required this.homeDataEntity, required this.homePaginationEntity});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/entities/job_details_entity.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/sub_entity/home_data_entity.dart';
+class JobDetailsEntity extends HomeDataEntity {
+  final String description;
+  final List<String> skills, responsibilities, requirements, benefits;
+  JobDetailsEntity({
+    required super.id, required super.title, required super.experience,
+    required super.jobLevel, required super.jobType, required super.location,
+    required super.salaryRange, required super.slug, required super.category,
+    required super.createdAt, required super.updatedAt, required super.isFavorite,
+    required super.userPostedByEntity,
+    required this.description, required this.skills, required this.responsibilities,
+    required this.requirements, required this.benefits,
+  });
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/entities/sub_entity/total_jobs_entity.dart
+──────────────────────────────────────────────────────────
+class TotalJobsEntity {
+  final int fullTime, partTime, freelance;
+  TotalJobsEntity({required this.fullTime, required this.partTime, required this.freelance});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/entities/sub_entity/suggested_job_company_entity.dart
+──────────────────────────────────────────────────────────
+class SuggestedJobCompanyEntity {
+  final String id, fullName;
+  final String? imageUrl;
+  SuggestedJobCompanyEntity({required this.id, required this.fullName, required this.imageUrl});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/entities/sub_entity/suggested_job_entity.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/sub_entity/suggested_job_company_entity.dart';
+class SuggestedJobEntity {
+  final String id, title, location, jobType, jobLevel, salaryRange, createdAt;
+  final SuggestedJobCompanyEntity company;
+  SuggestedJobEntity({required this.id, required this.title, required this.company,
+    required this.location, required this.jobType, required this.jobLevel,
+    required this.salaryRange, required this.createdAt});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/entities/stats_entity.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/sub_entity/suggested_job_entity.dart';
+import 'package:job_finder/features/home/domain/entities/sub_entity/total_jobs_entity.dart';
+class StatsEntity {
+  final bool isSuccess;
+  final TotalJobsEntity totalJobs;
+  final List<SuggestedJobEntity> suggestedJobs;
+  StatsEntity({required this.isSuccess, required this.totalJobs, required this.suggestedJobs});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/repo/home_repo.dart
+──────────────────────────────────────────────────────────
+import 'package:dartz/dartz.dart';
+import 'package:job_finder/core/errors/failure.dart';
+import 'package:job_finder/core/params/list_all_jobs.dart';
+import 'package:job_finder/features/home/domain/entities/home_entity.dart';
+import 'package:job_finder/features/home/domain/entities/job_details_entity.dart';
+import 'package:job_finder/features/home/domain/entities/stats_entity.dart';
+
+abstract class HomeRepo {
+  Future<Either<Failure, HomeEntity>> getHomeJobs({required ListAllJobsParams params});
+  Future<Either<Failure, JobDetailsEntity>> getJobDetails({required String jobSlug});
+  Future<Either<Failure, StatsEntity>> getStats();
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/uses_cases/home_jobs_use_case.dart
+──────────────────────────────────────────────────────────
+import 'package:dartz/dartz.dart';
+import 'package:job_finder/core/errors/failure.dart';
+import 'package:job_finder/core/params/list_all_jobs.dart';
+import 'package:job_finder/features/home/domain/entities/home_entity.dart';
+import 'package:job_finder/features/home/domain/repo/home_repo.dart';
+class HomeJobsUseCase {
+  final HomeRepo homeRepo;
+  HomeJobsUseCase({required this.homeRepo});
+  Future<Either<Failure, HomeEntity>> call({required ListAllJobsParams params}) async {
+    return homeRepo.getHomeJobs(params: params);
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/uses_cases/get_job_details_use_case.dart
+──────────────────────────────────────────────────────────
+import 'package:dartz/dartz.dart';
+import 'package:job_finder/core/errors/failure.dart';
+import 'package:job_finder/features/home/domain/entities/job_details_entity.dart';
+import 'package:job_finder/features/home/domain/repo/home_repo.dart';
+class GetJobDetailsUseCase {
+  final HomeRepo homeRepo;
+  GetJobDetailsUseCase({required this.homeRepo});
+  Future<Either<Failure, JobDetailsEntity>> call({required String jobSlug}) async {
+    return await homeRepo.getJobDetails(jobSlug: jobSlug);
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/domain/uses_cases/get_stats_use_case.dart
+──────────────────────────────────────────────────────────
+import 'package:dartz/dartz.dart';
+import 'package:job_finder/core/errors/failure.dart';
+import 'package:job_finder/features/home/domain/entities/stats_entity.dart';
+import 'package:job_finder/features/home/domain/repo/home_repo.dart';
+class GetStatsUseCase {
+  final HomeRepo homeRepo;
+  GetStatsUseCase({required this.homeRepo});
+  Future<Either<Failure, StatsEntity>> call() async => homeRepo.getStats();
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/models/sub_models/user_posted_by_model.dart
+──────────────────────────────────────────────────────────
+import '../../../domain/entities/sub_entity/user_posted_by_entity.dart';
+class UserPostedByModel extends UserPostedByEntity {
+  UserPostedByModel({required super.id, required super.fullName, required super.email, required super.imageUrl, required super.role});
+  factory UserPostedByModel.fromJson(Map<String, dynamic> json) {
+    return UserPostedByModel(
+      id: json['id'] ?? '', fullName: json['fullName'] ?? '',
+      email: json['email'] ?? '', imageUrl: json['imageUrl'], role: json['role'] ?? '',
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/models/sub_models/home_data_model.dart
+──────────────────────────────────────────────────────────
+import '../../../domain/entities/sub_entity/home_data_entity.dart';
+import 'user_posted_by_model.dart';
+class HomeDataModel extends HomeDataEntity {
+  HomeDataModel({required super.id, required super.title, required super.experience,
+    required super.jobLevel, required super.jobType, required super.location,
+    required super.salaryRange, required super.slug, required super.category,
+    required super.createdAt, required super.updatedAt, required super.isFavorite,
+    required super.userPostedByEntity});
+  factory HomeDataModel.fromJson(Map<String, dynamic> map) {
+    return HomeDataModel(
+      id: map["id"] ?? '', title: map["title"] ?? '', experience: map["experience"] ?? '',
+      jobLevel: map["jobLevel"] ?? '', jobType: map["jobType"] ?? '',
+      location: map["location"] ?? '', salaryRange: map["salaryRange"] ?? '',
+      slug: map["slug"] ?? '', category: map["category"],
+      createdAt: map["createdAt"] ?? '', updatedAt: map["updatedAt"] ?? '',
+      isFavorite: map["isFavorite"] ?? false,
+      userPostedByEntity: UserPostedByModel.fromJson(map["postedBy"] ?? {}),
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/models/sub_models/home_pagination_model.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/sub_entity/home_pagination_entity.dart';
+class HomePaginationModel extends HomePaginationEntity {
+  HomePaginationModel({required super.maxCount, required super.currentPage, required super.totalPages, required super.hasNext, required super.hasPrevious});
+  factory HomePaginationModel.fromJson(Map<String, dynamic> map) {
+    return HomePaginationModel(
+      maxCount: map["maxCount"], currentPage: map["currentPage"],
+      totalPages: map["totalPages"], hasNext: map["hasNext"], hasPrevious: map["hasPrevious"],
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/models/sub_models/total_jobs_model.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/sub_entity/total_jobs_entity.dart';
+class TotalJobsModel extends TotalJobsEntity {
+  TotalJobsModel({required super.fullTime, required super.partTime, required super.freelance});
+  factory TotalJobsModel.fromJson(Map<String, dynamic> json) {
+    return TotalJobsModel(fullTime: json['fullTime'] ?? 0, partTime: json['partTime'] ?? 0, freelance: json['freelance'] ?? 0);
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/models/sub_models/suggested_job_company_model.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/sub_entity/suggested_job_company_entity.dart';
+class SuggestedJobCompanyModel extends SuggestedJobCompanyEntity {
+  SuggestedJobCompanyModel({required super.id, required super.fullName, required super.imageUrl});
+  factory SuggestedJobCompanyModel.fromJson(Map<String, dynamic> json) {
+    return SuggestedJobCompanyModel(id: json['id'] ?? '', fullName: json['fullName'] ?? '', imageUrl: json['imageUrl']);
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/models/sub_models/suggested_job_model.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/sub_entity/suggested_job_entity.dart';
+import 'package:job_finder/features/home/data/models/sub_models/suggested_job_company_model.dart';
+class SuggestedJobModel extends SuggestedJobEntity {
+  SuggestedJobModel({required super.id, required super.title, required super.company,
+    required super.location, required super.jobType, required super.jobLevel,
+    required super.salaryRange, required super.createdAt});
+  factory SuggestedJobModel.fromJson(Map<String, dynamic> json) {
+    return SuggestedJobModel(
+      id: json['id'] ?? '', title: json['title'] ?? '',
+      company: SuggestedJobCompanyModel.fromJson(json['company'] ?? {}),
+      location: json['location'] ?? '', jobType: json['jobType'] ?? '',
+      jobLevel: json['jobLevel'] ?? '', salaryRange: json['salaryRange'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/models/home_model.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/data/models/sub_models/home_data_model.dart';
+import 'package:job_finder/features/home/domain/entities/home_entity.dart';
+import 'sub_models/home_pagination_model.dart';
+class HomeModel extends HomeEntity {
+  HomeModel({required super.isSuccess, required super.homeDataEntity, required super.homePaginationEntity});
+  factory HomeModel.fromMap(Map<String, dynamic> map) {
+    return HomeModel(
+      isSuccess: map["success"] ?? false,
+      homeDataEntity: (map["data"] as List?)?.map((e) => HomeDataModel.fromJson(e)).toList() ?? [],
+      homePaginationEntity: HomePaginationModel.fromJson(map["pagination"] ?? {}),
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/models/job_detail_model.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/data/models/sub_models/user_posted_by_model.dart';
+import '../../domain/entities/job_details_entity.dart';
+class JobDetailsModel extends JobDetailsEntity {
+  JobDetailsModel({required super.id, required super.title, required super.experience,
+    required super.jobLevel, required super.jobType, required super.location,
+    required super.salaryRange, required super.slug, required super.category,
+    required super.createdAt, required super.updatedAt, required super.isFavorite,
+    required super.userPostedByEntity, required super.description, required super.skills,
+    required super.responsibilities, required super.requirements, required super.benefits});
+  factory JobDetailsModel.fromJson(Map<String, dynamic> map) {
+    return JobDetailsModel(
+      id: map['id'] ?? '', title: map['title'] ?? '', slug: map['slug'] ?? '',
+      location: map['location'] ?? '', experience: map['experience'] ?? '',
+      jobType: map['jobType'] ?? '', jobLevel: map['jobLevel'] ?? '',
+      salaryRange: map['salaryRange'] ?? '', category: map['category'],
+      createdAt: map['createdAt'] ?? '', updatedAt: map['updatedAt'] ?? '',
+      isFavorite: map['isFavorite'] ?? false,
+      userPostedByEntity: UserPostedByModel.fromJson(map['postedBy'] ?? {}),
+      description: map['description'] ?? '',
+      skills: List<String>.from(map['skills'] ?? []),
+      responsibilities: List<String>.from(map['responsibilities'] ?? []),
+      requirements: List<String>.from(map['requirements'] ?? []),
+      benefits: List<String>.from(map['benefits'] ?? []),
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/models/stats_model.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/features/home/domain/entities/stats_entity.dart';
+import 'package:job_finder/features/home/data/models/sub_models/total_jobs_model.dart';
+import 'package:job_finder/features/home/data/models/sub_models/suggested_job_model.dart';
+class StatsModel extends StatsEntity {
+  StatsModel({required super.isSuccess, required super.totalJobs, required super.suggestedJobs});
+  factory StatsModel.fromMap(Map<String, dynamic> map) {
+    final data = map['data'] as Map<String, dynamic>? ?? {};
+    return StatsModel(
+      isSuccess: map['success'] ?? false,
+      totalJobs: TotalJobsModel.fromJson(data['totalJobs'] as Map<String, dynamic>? ?? {}),
+      suggestedJobs: (data['suggestedJobs'] as List<dynamic>? ?? [])
+          .map((e) => SuggestedJobModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/data_source/home_remote_data_source.dart
+──────────────────────────────────────────────────────────
+import 'package:job_finder/core/database/api/dio_consumer.dart';
+import 'package:job_finder/core/database/api/end_points.dart';
+import 'package:job_finder/core/params/list_all_jobs.dart';
+import 'package:job_finder/features/home/data/models/home_model.dart';
+import 'package:job_finder/features/home/data/models/job_detail_model.dart';
+import 'package:job_finder/features/home/data/models/stats_model.dart';
+import 'package:job_finder/features/home/domain/entities/home_entity.dart';
+import 'package:job_finder/features/home/domain/entities/job_details_entity.dart';
+import 'package:job_finder/features/home/domain/entities/stats_entity.dart';
+
+class HomeRemoteDataSource {
+  final DioConsumer dioConsumer;
+  HomeRemoteDataSource({required this.dioConsumer});
+
+  Future<HomeEntity> getJobsData({required ListAllJobsParams params}) async {
+    final response = await dioConsumer.get(AppEndPoint.listAllJobs, queryParameters: params.toMap());
+    return HomeModel.fromMap(response);
+  }
+
+  Future<JobDetailsEntity> getJobDetails({required String jobSlug}) async {
+    final res = await dioConsumer.get("${AppEndPoint.getJobDetails}/$jobSlug");
+    return JobDetailsModel.fromJson(res["data"]);
+  }
+
+  Future<StatsEntity> getStats() async {
+    final response = await dioConsumer.get(AppEndPoint.states);
+    return StatsModel.fromMap(response);
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/data/repo/home_repo_impl.dart
+──────────────────────────────────────────────────────────
+import 'package:dartz/dartz.dart';
+import 'package:job_finder/core/errors/exceptions.dart';
+import 'package:job_finder/core/errors/failure.dart';
+import 'package:job_finder/core/params/list_all_jobs.dart';
+import 'package:job_finder/features/home/data/data_source/home_remote_data_source.dart';
+import 'package:job_finder/features/home/domain/entities/home_entity.dart';
+import 'package:job_finder/features/home/domain/entities/job_details_entity.dart';
+import 'package:job_finder/features/home/domain/entities/stats_entity.dart';
+import 'package:job_finder/features/home/domain/repo/home_repo.dart';
+
+class HomeRepoImpl extends HomeRepo {
+  final HomeRemoteDataSource homeRemoteDataSource;
+  HomeRepoImpl({required this.homeRemoteDataSource});
+
+  @override
+  Future<Either<Failure, HomeEntity>> getHomeJobs({required ListAllJobsParams params}) async {
+    try {
+      final HomeEntity homeEntity = await homeRemoteDataSource.getJobsData(params: params);
+      return right(homeEntity);
+    } on ServerException catch (e) {
+      return left(Failure(errMessage: e.errorModel.errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, JobDetailsEntity>> getJobDetails({required String jobSlug}) async {
+    try {
+      final jobDetails = await homeRemoteDataSource.getJobDetails(jobSlug: jobSlug);
+      return right(jobDetails);
+    } on ServerException catch (e) {
+      return left(Failure(errMessage: e.errorModel.errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, StatsEntity>> getStats() async {
+    try {
+      final stats = await homeRemoteDataSource.getStats();
+      return right(stats);
+    } on ServerException catch (e) {
+      return left(Failure(errMessage: e.errorModel.errorMessage));
+    }
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/presentation/bloc/home/home_jobs_bloc.dart (+ event + state)
+──────────────────────────────────────────────────────────
+// home_jobs_event.dart (part)
+part of 'home_jobs_bloc.dart';
+@immutable sealed class HomeJobsEvent {}
+class HomeJobsSearchEvent extends HomeJobsEvent {
+  final ListAllJobsParams params;
+  HomeJobsSearchEvent({required this.params});
+}
+
+// home_jobs_state.dart (part)
+part of 'home_jobs_bloc.dart';
+@immutable sealed class HomeJobsState {}
+final class HomeJobsInitial extends HomeJobsState {}
+final class HomeJobsLoading extends HomeJobsState {}
+final class HomeJobsSuccess extends HomeJobsState {
+  final HomeEntity homeEntity;
+  HomeJobsSuccess({required this.homeEntity});
+}
+final class HomeJobsFailed extends HomeJobsState {
+  final String errorMessage;
+  HomeJobsFailed({required this.errorMessage});
+}
+
+// home_jobs_bloc.dart
+import 'package:bloc/bloc.dart';
+import 'package:job_finder/core/params/list_all_jobs.dart';
+import 'package:job_finder/features/home/domain/entities/home_entity.dart';
+import 'package:job_finder/features/home/domain/uses_cases/get_job_details_use_case.dart';
+import 'package:job_finder/features/home/domain/uses_cases/home_jobs_use_case.dart';
+import 'package:meta/meta.dart';
+part 'home_jobs_event.dart';
+part 'home_jobs_state.dart';
+
+class HomeJobsBloc extends Bloc<HomeJobsEvent, HomeJobsState> {
+  HomeJobsBloc({required this.homeJobsUseCase, required this.jobDetailsUseCase}) : super(HomeJobsInitial()) {
+    on<HomeJobsSearchEvent>(_getHomeJobs);
+  }
+  final HomeJobsUseCase homeJobsUseCase;
+  final GetJobDetailsUseCase jobDetailsUseCase;
+
+  Future<void> _getHomeJobs(HomeJobsSearchEvent event, Emitter<HomeJobsState> emit) async {
+    emit(HomeJobsLoading());
+    final result = await homeJobsUseCase.call(params: event.params);
+    result.fold(
+      (failure) => emit(HomeJobsFailed(errorMessage: failure.errMessage)),
+      (success) => emit(HomeJobsSuccess(homeEntity: success)),
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/presentation/bloc/stats/stats_bloc.dart (+ event + state)
+──────────────────────────────────────────────────────────
+// stats_event.dart (part)
+part of 'stats_bloc.dart';
+@immutable sealed class StatsEvent {}
+class FetchStatsEvent extends StatsEvent {}
+
+// stats_state.dart (part)
+part of 'stats_bloc.dart';
+@immutable sealed class StatsState {}
+final class StatsInitial extends StatsState {}
+final class StatsLoading extends StatsState {}
+final class StatsSuccess extends StatsState {
+  final StatsEntity statsEntity;
+  StatsSuccess({required this.statsEntity});
+}
+final class StatsFailed extends StatsState {
+  final String errorMessage;
+  StatsFailed({required this.errorMessage});
+}
+
+// stats_bloc.dart
+import 'package:bloc/bloc.dart';
+import 'package:job_finder/features/home/domain/entities/stats_entity.dart';
+import 'package:job_finder/features/home/domain/uses_cases/get_stats_use_case.dart';
+import 'package:meta/meta.dart';
+part 'stats_event.dart';
+part 'stats_state.dart';
+
+class StatsBloc extends Bloc<StatsEvent, StatsState> {
+  final GetStatsUseCase getStatsUseCase;
+  StatsBloc({required this.getStatsUseCase}) : super(StatsInitial()) {
+    on<FetchStatsEvent>(_onFetchStats);
+  }
+  Future<void> _onFetchStats(FetchStatsEvent event, Emitter<StatsState> emit) async {
+    emit(StatsLoading());
+    final result = await getStatsUseCase.call();
+    result.fold(
+      (failure) => emit(StatsFailed(errorMessage: failure.errMessage)),
+      (stats) => emit(StatsSuccess(statsEntity: stats)),
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/home/presentation/bloc/detailed_job/job_details_cubit.dart
+──────────────────────────────────────────────────────────
+import 'package:bloc/bloc.dart';
+import 'package:job_finder/features/home/domain/uses_cases/get_job_details_use_case.dart';
+import 'job_details_state.dart';
+
+class JobDetailsCubit extends Cubit<JobDetailsState> {
+  final GetJobDetailsUseCase getJobDetailsUseCase;
+  JobDetailsCubit({required this.getJobDetailsUseCase}) : super(JobDetailsInitial());
+  Future<void> getJobDetails(String jobSlug) async {
+    emit(JobDetailsLoading());
+    final result = await getJobDetailsUseCase.call(jobSlug: jobSlug);
+    result.fold(
+      (failure) => emit(JobDetailsFailed(errorMessage: failure.errMessage)),
+      (success) => emit(JobDetailsSuccess(jobDetailsEntity: success)),
+    );
+  }
+}
+
+// job_details_state.dart
+import 'package:flutter/material.dart';
+import 'package:job_finder/features/home/domain/entities/job_details_entity.dart';
+@immutable sealed class JobDetailsState {}
+final class JobDetailsInitial extends JobDetailsState {}
+final class JobDetailsLoading extends JobDetailsState {}
+final class JobDetailsSuccess extends JobDetailsState {
+  final JobDetailsEntity jobDetailsEntity;
+  JobDetailsSuccess({required this.jobDetailsEntity});
+}
+final class JobDetailsFailed extends JobDetailsState {
+  final String errorMessage;
+  JobDetailsFailed({required this.errorMessage});
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/shared/custom_button.dart
+──────────────────────────────────────────────────────────
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../core/utils/app_colors.dart';
+import '../../core/utils/text_styles.dart';
+
+class CustomButton extends StatelessWidget {
+  CustomButton({super.key, this.buttonColor = AppColors.kPrimary, this.textColor = AppColors.kWhite, required this.onPressed, required this.text});
+  final Function onPressed;
+  Color buttonColor;
+  final String text;
+  Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity, height: 52.h,
+      child: ElevatedButton(
+        onPressed: () { onPressed(); },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+          elevation: 0,
+        ),
+        child: Text(text, style: Styles.buttonText.copyWith(color: textColor)),
+      ),
+    );
+  }
+}
+
+──────────────────────────────────────────────────────────
+FILE: lib/features/shared/scaffold_message.dart
+──────────────────────────────────────────────────────────
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:job_finder/core/utils/app_colors.dart';
+import '../../core/utils/text_styles.dart';
+
+ScaffoldFeatureController<SnackBar, SnackBarClosedReason> scaffoldMessengerError(
+    BuildContext context, String errorMessage, {Color? color}) {
+  return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    shape: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.r),
+      borderSide: BorderSide(color: Colors.transparent),
+    ),
+    padding: EdgeInsetsGeometry.all(8.sp),
+    margin: EdgeInsets.all(50.sp),
+    elevation: 10.h,
+    behavior: SnackBarBehavior.floating,
+    clipBehavior: Clip.none,
+    content: Text(errorMessage, style: Styles.mediumTitle.copyWith(color: AppColors.kWhite), textAlign: TextAlign.center),
+    backgroundColor: color ?? Colors.red,
+  ));
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. CONVENTIONS & RULES — MUST FOLLOW WHEN CREATING A NEW FEATURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NAMING:
+  Entity class  : FeatureNameEntity (e.g. StatsEntity)
+  Model class   : FeatureNameModel extends FeatureNameEntity
+  DataSource    : FeatureNameRemoteDataSource
+  Repo abstract : FeatureNameRepo (abstract class)
+  Repo impl     : FeatureNameRepoImpl extends/implements FeatureNameRepo
+  Use case      : VerbFeatureNameUseCase (e.g. GetStatsUseCase)
+  Bloc          : FeatureNameBloc
+  Cubit         : FeatureNameCubit
+  State files   : feature_name_state.dart (part of bloc/cubit)
+  Event files   : feature_name_event.dart (part of bloc)
+
+STEPS TO ADD A NEW API FEATURE:
+  1. Create entity in domain/entities/
+  2. Add abstract method to domain/repo/FeatureRepo
+  3. Create use case in domain/uses_cases/
+  4. Create model in data/models/ (extends entity, adds fromJson)
+  5. Add method to data/data_source/DataSource
+  6. Implement method in data/repo/RepoImpl with try/catch
+  7. Create Bloc or Cubit in presentation/bloc/
+  8. Register DataSource, Repo, UseCase (lazySingleton), Bloc/Cubit (factory) in di.dart
+  9. Add BlocProvider in main.dart MultiBlocProvider
+  10. Build screen using BlocBuilder or BlocConsumer
+
+SKELETONIZER STEPS:
+  1. Create a _getDummyData() method with REALISTIC content
+     (same character length as real data, real-looking text)
+  2. final displayData = isLoading ? dummyData : realData
+  3. Wrap content in: Skeletonizer(enabled: isLoading, child: ...)
+  4. Never return SizedBox.shrink() or empty list during loading
+
+EITHER PATTERN:
+  // In repo:
+  try {
+    final result = await dataSource.fetchSomething();
+    return right(result);
+  } on ServerException catch (e) {
+    return left(Failure(errMessage: e.errorModel.errorMessage));
+  }
+  // In bloc:
+  result.fold(
+    (failure) => emit(FeatureFailed(errorMessage: failure.errMessage)),
+    (data)    => emit(FeatureSuccess(data: data)),
+  );
+
+DI PATTERN:
+  sl.registerLazySingleton<MyDataSource>(() => MyDataSource(api: sl<DioConsumer>()));
+  sl.registerLazySingleton<MyRepo>(() => MyRepoImpl(dataSource: sl<MyDataSource>()));
+  sl.registerLazySingleton<MyUseCase>(() => MyUseCase(repo: sl<MyRepo>()));
+  sl.registerFactory<MyBloc>(() => MyBloc(useCase: sl<MyUseCase>()));
+
+API URL RULE:
+  base URL : "https://api.example.com/api/v2/"  ← ends with /
+  endpoint : "resource/path"                     ← NO leading /
+  (Dio with leading / ignores base path — causes 404 or wrong response)
+
+================================================================================
+END OF ARCHITECTURE EXPORT
+================================================================================

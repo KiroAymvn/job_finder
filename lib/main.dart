@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:job_finder/core/database/api/dio_client.dart';
 import 'package:job_finder/core/database/api/dio_consumer.dart';
 import 'package:job_finder/core/params/list_all_jobs.dart';
+import 'package:job_finder/core/utils/app_colors.dart';
 import 'package:job_finder/core/utils/app_router.dart';
 import 'package:job_finder/core/utils/secure_storage_helper.dart';
 import 'package:job_finder/features/auth/data/data_source/remote_data_source.dart';
@@ -70,6 +71,8 @@ class MyApp extends StatelessWidget {
             // BlocProvider<AnotherCubit>(create: (context) => AnotherCubit()),
           ],
           child: MaterialApp.router(
+            theme: ThemeData(
+              scaffoldBackgroundColor: AppColors.kGreyEE,),
             locale: DevicePreview.locale(context),
             builder: DevicePreview.appBuilder,
             debugShowCheckedModeBanner: false,
