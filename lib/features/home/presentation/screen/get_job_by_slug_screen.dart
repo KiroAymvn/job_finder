@@ -11,6 +11,7 @@ import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/core/utils/images.dart';
 import 'package:job_finder/core/utils/text_styles.dart';
 import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
+import 'package:job_finder/features/shared/build_tage_widget.dart';
 import 'package:job_finder/features/shared/custom_button.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -379,25 +380,12 @@ class _SkillsSectionWidget extends StatelessWidget {
         Wrap(
           spacing: 8.w,
           runSpacing: 8.h,
-          children: skills.map((skill) => _buildSkillChip(skill)).toList(),
+          children: skills.map((skill) => BuildTagWidget(title: skill,)).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildSkillChip(String label) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: AppColors.kGreyEE,
-        borderRadius: BorderRadius.circular(AppRadius.smallR),
-      ),
-      child: Text(
-        label,
-        style: Styles.body?.copyWith(color: AppColors.kGrey),
-      ),
-    );
-  }
 }
 
 class _BulletListWidget extends StatelessWidget {

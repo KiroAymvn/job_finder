@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:job_finder/features/shared/build_tage_widget.dart';
 
 import '../../core/utils/app_colors.dart';
 import '../../core/utils/app_radius.dart';
@@ -97,9 +98,9 @@ class JobCardWidget extends StatelessWidget {
               // Tags: Design, Full Time
               Row(
                 children: [
-                  _buildTag(item.jobType),
+                  BuildTagWidget(title:  item.jobType,),
                   Gap(8.w),
-                  _buildTag(item.jobLevel),
+                  BuildTagWidget(title:  item.jobLevel),
                 ],
               ),
               Gap(16.h),
@@ -161,25 +162,5 @@ class JobCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTag(String title) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 6.h,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.kPrimary.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(
-          AppRadius.smallR,
-        ),
-      ),
-      child: Text(
-        title,
-        style: Styles.smallBody?.copyWith(
-          color: AppColors.kPrimary,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
+
 }
