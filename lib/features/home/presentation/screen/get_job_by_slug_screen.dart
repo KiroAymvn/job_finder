@@ -11,7 +11,7 @@ import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/core/utils/images.dart';
 import 'package:job_finder/core/utils/text_styles.dart';
 import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
-import 'package:job_finder/features/shared/build_tage_widget.dart';
+import 'package:job_finder/features/shared/build_tag_widget.dart';
 import 'package:job_finder/features/shared/custom_button.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 

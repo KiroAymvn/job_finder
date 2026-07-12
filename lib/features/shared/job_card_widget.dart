@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:job_finder/features/shared/build_tage_widget.dart';
+import 'package:job_finder/features/shared/build_tag_widget.dart';
 
 import '../../core/utils/app_colors.dart';
 import '../../core/utils/app_radius.dart';

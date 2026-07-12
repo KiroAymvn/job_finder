@@ -21,7 +21,7 @@ final String title;
         vertical: 6.h,
       ),
       decoration: BoxDecoration(
-        color: isSelected ? AppColors.kPrimary.withOpacity(0.15):AppColors.kGreyEE,
+        color: isSelected ? AppColors.kPrimary.withOpacity(0.15):AppColors.kGreyDE,
         borderRadius: BorderRadius.circular(
           AppRadius.smallR,
         ),

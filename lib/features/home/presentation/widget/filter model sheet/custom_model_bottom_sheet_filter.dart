@@ -2,12 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:job_finder/core/params/list_all_jobs.dart';
+import 'package:job_finder/core/utils/app_colors.dart';
 import 'package:job_finder/features/home/presentation/widget/filter%20model%20sheet/search_widget.dart';
+import 'package:job_finder/features/shared/build_tag_widget.dart';
+import 'package:job_finder/features/shared/custom_button.dart';
 
 import '../../../../../core/utils/app_radius.dart';
 import '../../../../../core/utils/app_spaces.dart';
 import '../../../../../core/utils/text_styles.dart';
-import 'location_drop_dwon.dart';
+import 'location_drop_down.dart';
 
 class CustomModelBottomSheetFilter extends StatefulWidget {
   const CustomModelBottomSheetFilter({super.key});
@@ -21,14 +25,20 @@ final List<String> jobLevelsList = [
   "Entry Level",
   "Mid Level",
   "Senior Level",
+  "Executive",
 ];
+String finalLocation = '';
+final List<String> jobTypeList = [
+  "Full Time",
+  "Part Time",
+  "Contract",
+  "Internship",
+];
+String selectedJobLevel = jobLevelsList[0];
+String selectedJobType = jobTypeList[0];
 
 class _CustomModelBottomSheetFilterState
     extends State<CustomModelBottomSheetFilter> {
-  String finalLocation = '';
-
-  String currentJobLevelOption = jobLevelsList[0];
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -64,46 +74,93 @@ class _CustomModelBottomSheetFilterState
             },
           ),
           Gap(AppSpaces.mediumH),
-
-          Text("Job Type", style: Styles.mediumTitle),
+          _jobTypeSelectionWidget(),
+          Gap(AppSpaces.mediumH),
+          _jobLevelSelectionWidget(),
+          Spacer(),
           Row(
             children: [
-              Wrap(
-              direction: Axis.horizontal,
-                children: jobLevelsList.map(
-                  (level) => radioAndTextWidget(
-                    value: level,
-                    groupValue: currentJobLevelOption,
-                  ),
-                ).toList(),
+              Expanded(
+                child: CustomButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  text: "Close",
+                  textColor: AppColors.kGrey,
+                  buttonColor: AppColors.kGreyDE,
+                ),
               ),
+              Gap(AppSpaces.smallW),
+              Expanded(
+                child: CustomButton(
+                  onPressed: () {},
+                  text: "Apply",
+
+                ),
+              ),
+
             ],
           ),
+          Gap(AppSpaces.smallH),
         ],
       ),
     );
   }
 
-  Row radioAndTextWidget({
-    required String value,
-    required String groupValue,
-  }) {
-    return Row(
+  Column _jobTypeSelectionWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Radio<String>(
-          // تحديد نوع الـ Radio ليكون int
-          value: value,
-          groupValue: groupValue,
-          onChanged: (value) {
-            setState(() {
-              // 2. الآن سيتم تحديث المتغير ولن يتم تصفيره عند إعادة البناء
-              currentJobLevelOption = value.toString();
-              print(currentJobLevelOption);
-            });
-          },
+        Text("Job Type", style: Styles.mediumTitle),
+        Gap(AppSpaces.smallH),
+        Wrap(
+          spacing: AppSpaces.smallW,
+          runSpacing: AppSpaces.smallH,
+          children: jobTypeList
+              .map(
+                (type) => InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedJobType = type;
+                    });
+                  },
+                  child: BuildTagWidget(
+                    title: type,
+                    isSelected: selectedJobType == type,
+                  ),
+                ),
+              )
+              .toList(),
         ),
-         Text(value),
-        // يفضل استخدام const للنصوص الثابتة
+      ],
+    );
+  }
+
+  Column _jobLevelSelectionWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Job Level", style: Styles.mediumTitle),
+        Gap(AppSpaces.smallH),
+        Wrap(
+          spacing: AppSpaces.smallW,
+          runSpacing: AppSpaces.smallH,
+          children: jobLevelsList
+              .map(
+                (level) => InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedJobLevel = level;
+                    });
+                  },
+                  child: BuildTagWidget(
+                    title: level,
+                    isSelected: selectedJobLevel == level,
+                  ),
+                ),
+              )
+              .toList(),
+        ),
       ],
     );
   }
