@@ -81,7 +81,6 @@ Future<void> setUp() async {
   sl.registerFactory<HomeJobsBloc>(
     () => HomeJobsBloc(
       homeJobsUseCase: sl<HomeJobsUseCase>(),
-      jobDetailsUseCase: sl<GetJobDetailsUseCase>(),
     ),
   );
   sl.registerFactory<JobDetailsCubit>(

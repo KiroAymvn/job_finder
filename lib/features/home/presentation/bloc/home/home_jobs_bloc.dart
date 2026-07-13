@@ -20,13 +20,11 @@ class HomeJobsBloc
     extends Bloc<HomeJobsEvent, HomeJobsState> {
   HomeJobsBloc({
     required this.homeJobsUseCase,
-    required this.jobDetailsUseCase,
   }) : super(HomeJobsInitial()) {
     on<HomeJobsSearchEvent>(_getHomeJobs);
   }
 
   final HomeJobsUseCase homeJobsUseCase;
-  final GetJobDetailsUseCase jobDetailsUseCase;
 
   Future<void> _getHomeJobs(
     HomeJobsSearchEvent event,

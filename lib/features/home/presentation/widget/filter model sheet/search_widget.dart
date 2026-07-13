@@ -13,10 +13,11 @@ import '../../../../../core/utils/app_radius.dart';
 import 'custom_model_bottom_sheet_filter.dart';
 
 class SearchBarWidget extends StatelessWidget {
-  SearchBarWidget({super.key});
+  SearchBarWidget({super.key, required this.searchController});
 
-  final TextEditingController controller =
-      TextEditingController();
+  final TextEditingController searchController ;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class SearchBarWidget extends StatelessWidget {
           Expanded(
             child: CustomTextField(
               label: "Search",
-              controller: controller,
+              controller: searchController,
             ),
           ),
           Gap(AppSpaces.smallW),
@@ -42,12 +43,11 @@ class SearchBarWidget extends StatelessWidget {
               showModalBottomSheet(
                 context: context,
                 builder: (context) =>
-                    CustomModelBottomSheetFilter(),
+                    CustomModelBottomSheetFilter(searchController: searchController,),
               );
             },
             child: AspectRatio(
               aspectRatio: 1,
-              // هذه الأداة تضمن أن العرض سيكون دائماً مساوياً للطول (مربع مثالي)
               child: Container(
                 decoration: BoxDecoration(
                   color: AppColors.kPrimary.withOpacity(
@@ -57,11 +57,9 @@ class SearchBarWidget extends StatelessWidget {
                     AppRadius.smallR,
                   ),
                 ),
-                // 3. LayoutBuilder يقرأ الحجم الذي أعطاه له الـ AspectRatio
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     return Padding(
-                      // padding = ربع الارتفاع الفعلي للمربع من كل الاتجاهات
                       padding: EdgeInsets.all(
                         constraints.maxHeight / 4,
                       ),

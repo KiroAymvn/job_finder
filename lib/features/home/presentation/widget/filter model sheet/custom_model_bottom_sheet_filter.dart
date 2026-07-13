@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:job_finder/core/params/list_all_jobs.dart';
 import 'package:job_finder/core/utils/app_colors.dart';
+import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
 import 'package:job_finder/features/home/presentation/widget/filter%20model%20sheet/search_widget.dart';
 import 'package:job_finder/features/shared/build_tag_widget.dart';
 import 'package:job_finder/features/shared/custom_button.dart';
@@ -14,12 +16,17 @@ import '../../../../../core/utils/text_styles.dart';
 import 'location_drop_down.dart';
 
 class CustomModelBottomSheetFilter extends StatefulWidget {
-  const CustomModelBottomSheetFilter({super.key});
+  const CustomModelBottomSheetFilter({
+    super.key,
+    required this.searchController,
+  });
 
   @override
   State<CustomModelBottomSheetFilter> createState() =>
       _CustomModelBottomSheetFilterState();
+  final TextEditingController searchController;
 }
+
 String finalLocation = '';
 final List<String> jobLevelsList = [
   "Entry Level",
@@ -92,12 +99,30 @@ class _CustomModelBottomSheetFilterState
               Gap(AppSpaces.smallW),
               Expanded(
                 child: CustomButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ListAllJobsParams
+                    params = ListAllJobsParams(
+                      jobType:
+                          ListAllJobsParams.convertJobTypeToModel(
+                            jobType: selectedJobType,
+                          ),
+                      jobLevel:
+                          ListAllJobsParams.convertJobLevelToModel(
+                            jobLevel: selectedJobLevel,
+                          ),
+                      location: finalLocation.contains("")?null:finalLocation,
+                      search:
+                          widget.searchController.text
+                              .contains("")
+                          ? null
+                          : widget.searchController.text,
+                    );
+                    print(params.toMap());
+                     context.read<HomeJobsBloc>().add(HomeJobsSearchEvent(params: params));
+                  },
                   text: "Apply",
-
                 ),
               ),
-
             ],
           ),
           Gap(AppSpaces.smallH),
