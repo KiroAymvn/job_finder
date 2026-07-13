@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gap/gap.dart';
+import 'package:job_finder/core/utils/images.dart';
+import 'package:job_finder/core/utils/text_styles.dart';
 import 'package:job_finder/features/home/presentation/widget/filter%20model%20sheet/search_widget.dart';
 import '../../../../core/utils/app_spaces.dart';
 
@@ -31,7 +36,22 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             children: [
               SearchBarWidget(),
-
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: .center,
+                  crossAxisAlignment: .center,
+                  children: [
+                    Image.asset(AppImages.search1, width: 0.5.sw,),
+                    Gap(AppSpaces.largeH),
+                    Text("No Results Found",style: Styles.mediumTitle,),
+                    Gap(AppSpaces.smallH),
+                    Text("No jobs found matching your search.",style: Styles.body,),
+                    FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text("Try different keywords or browse all available positions.",style: Styles.body,)),
+                  ],
+                ),
+              )
             ],
           ),
         ),

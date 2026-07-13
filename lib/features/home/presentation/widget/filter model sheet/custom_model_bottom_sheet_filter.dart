@@ -20,14 +20,13 @@ class CustomModelBottomSheetFilter extends StatefulWidget {
   State<CustomModelBottomSheetFilter> createState() =>
       _CustomModelBottomSheetFilterState();
 }
-
+String finalLocation = '';
 final List<String> jobLevelsList = [
   "Entry Level",
   "Mid Level",
   "Senior Level",
   "Executive",
 ];
-String finalLocation = '';
 final List<String> jobTypeList = [
   "Full Time",
   "Part Time",
@@ -53,9 +52,7 @@ class _CustomModelBottomSheetFilterState
           AppRadius.largeR,
         ),
       ),
-      child: Column(
-        mainAxisAlignment: .start,
-        crossAxisAlignment: .start,
+      child: ListView(
         children: [
           Align(
             alignment: AlignmentGeometry.center,
@@ -78,6 +75,8 @@ class _CustomModelBottomSheetFilterState
           Gap(AppSpaces.mediumH),
           _jobLevelSelectionWidget(),
           Spacer(),
+          Gap(AppSpaces.mediumH),
+
           Row(
             children: [
               Expanded(
