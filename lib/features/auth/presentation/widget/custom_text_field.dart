@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:job_finder/core/params/list_all_jobs.dart';
+import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
 
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/text_styles.dart';
@@ -10,7 +13,7 @@ class CustomTextField extends StatelessWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final TextEditingController controller;
-
+  final bool isSearch;
   // 1. تعريف ValueNotifier داخل الـ StatelessWidget
   late final ValueNotifier<bool> isObscureNotifier;
 
@@ -20,6 +23,7 @@ class CustomTextField extends StatelessWidget {
     required this.controller,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
+    this.isSearch = false,
   }) {
     // 2. إعطاء القيمة الابتدائية بناءً على نوع الحقل (كلمة مرور أم لا)
     isObscureNotifier = ValueNotifier<bool>(isPassword);
@@ -31,8 +35,15 @@ class CustomTextField extends StatelessWidget {
       valueListenable: isObscureNotifier,
       builder: (context, isObscure, child) {
         return TextFormField(
+          onFieldSubmitted: (value) {
+            if (isSearch && value.isNotEmpty) {
+              context.read<SearchScreenBloc>()..add(
+                HomeJobsSearchEvent(params: ListAllJobsParams(search: value)),
+              );
+            }
+          },
           controller: controller,
-          obscureText: isObscure, // الاعتماد على قيمة الـ ValueNotifier
+          obscureText: isObscure,
           keyboardType: keyboardType,
           style: Styles.smallTitle,
           decoration: InputDecoration(
@@ -50,15 +61,15 @@ class CustomTextField extends StatelessWidget {
             // 4. تحديث الأيقونة وتغيير القيمة بدون setState
             suffixIcon: isPassword
                 ? IconButton(
-              onPressed: () {
-                // عكس القيمة الحالية مباشرة
-                isObscureNotifier.value = !isObscureNotifier.value;
-              },
-              icon: Icon(
-                isObscure ? CupertinoIcons.eye_slash : CupertinoIcons.eye,
-                color: AppColors.kPrimary,
-              ),
-            )
+                    onPressed: () {
+                      // عكس القيمة الحالية مباشرة
+                      isObscureNotifier.value = !isObscureNotifier.value;
+                    },
+                    icon: Icon(
+                      isObscure ? CupertinoIcons.eye_slash : CupertinoIcons.eye,
+                      color: AppColors.kPrimary,
+                    ),
+                  )
                 : null,
 
             border: OutlineInputBorder(
@@ -71,7 +82,10 @@ class CustomTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
-              borderSide: const BorderSide(color: AppColors.kPrimary, width: 1.5),
+              borderSide: const BorderSide(
+                color: AppColors.kPrimary,
+                width: 1.5,
+              ),
             ),
           ),
         );

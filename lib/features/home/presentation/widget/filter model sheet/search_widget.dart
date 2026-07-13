@@ -15,9 +15,7 @@ import 'custom_model_bottom_sheet_filter.dart';
 class SearchBarWidget extends StatelessWidget {
   SearchBarWidget({super.key, required this.searchController});
 
-  final TextEditingController searchController ;
-
-
+  final TextEditingController searchController;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +31,7 @@ class SearchBarWidget extends StatelessWidget {
             child: CustomTextField(
               label: "Search",
               controller: searchController,
+              isSearch: true,
             ),
           ),
           Gap(AppSpaces.smallW),
@@ -42,27 +41,22 @@ class SearchBarWidget extends StatelessWidget {
             onTap: () {
               showModalBottomSheet(
                 context: context,
-                builder: (context) =>
-                    CustomModelBottomSheetFilter(searchController: searchController,),
+                builder: (context) => CustomModelBottomSheetFilter(
+                  searchController: searchController,
+                ),
               );
             },
             child: AspectRatio(
               aspectRatio: 1,
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.kPrimary.withOpacity(
-                    0.2,
-                  ),
-                  borderRadius: BorderRadius.circular(
-                    AppRadius.smallR,
-                  ),
+                  color: AppColors.kPrimary.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(AppRadius.smallR),
                 ),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     return Padding(
-                      padding: EdgeInsets.all(
-                        constraints.maxHeight / 4,
-                      ),
+                      padding: EdgeInsets.all(constraints.maxHeight / 4),
                       child: SvgPicture.asset(
                         AppImages.filterIcon,
                         color: AppColors.kPrimary,
@@ -78,4 +72,3 @@ class SearchBarWidget extends StatelessWidget {
     );
   }
 }
-

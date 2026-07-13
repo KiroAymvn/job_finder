@@ -62,9 +62,20 @@ class ListAllJobsParams {
     }
     return null;
   }
+
+  static String toTitleCase(String text) {
+    if (text.isEmpty) return text;
+    return text
+        .split(' ')
+        .map((word) {
+          if (word.isEmpty) return word;
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
+  }
+
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> map = {};
-
 
     if (page != null) map['page'] = page;
     if (limit != null) map['limit'] = limit;
@@ -72,8 +83,8 @@ class ListAllJobsParams {
     if (jobType != null) map['jobType'] = jobType!.value;
     if (jobLevel != null) map['jobLevel'] = jobLevel!.value;
 
-    if (location != null) map['location'] = location;
-    if (search != null) map['search'] = search;
+    if (location != null) map['location'] = toTitleCase(location!);
+    if (search != null) map['search'] = toTitleCase(search!);
 
     return map;
   }
