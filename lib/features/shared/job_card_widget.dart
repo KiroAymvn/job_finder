@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/features/shared/build_tag_widget.dart';
 
 import '../../core/utils/app_colors.dart';
@@ -11,19 +12,14 @@ import '../../core/utils/text_styles.dart';
 import '../home/domain/entities/home_entity.dart';
 
 class JobCardWidget extends StatelessWidget {
-  JobCardWidget({
-    super.key,
-    required this.homeEntity,
-    required this.index,
-  });
+  JobCardWidget({super.key, required this.homeEntity, required this.index});
 
   final HomeEntity? homeEntity;
   final int index;
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<bool> isSavedNotifier =
-        ValueNotifier<bool>(false);
+    final ValueNotifier<bool> isSavedNotifier = ValueNotifier<bool>(false);
     final item = homeEntity?.homeDataEntity[index];
     final userPostedBy = item?.userPostedByEntity;
     return Column(
@@ -33,9 +29,7 @@ class JobCardWidget extends StatelessWidget {
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
             color: AppColors.kWhite,
-            borderRadius: BorderRadius.circular(
-              AppRadius.largeR,
-            ),
+            borderRadius: BorderRadius.circular(AppRadius.largeR),
             border: Border.all(color: AppColors.kGreyEE),
             boxShadow: [
               BoxShadow(
@@ -55,10 +49,7 @@ class JobCardWidget extends StatelessWidget {
                     radius: 20.r,
                     backgroundColor: AppColors.kGreyF3,
                     child: userPostedBy!.imageUrl != null
-                        ? Image.network(
-                            userPostedBy.imageUrl
-                                .toString(),
-                          )
+                        ? Image.network(userPostedBy.imageUrl.toString())
                         : Image.asset(
                             AppImages.jobSearch,
                           ), // Placeholder for Google Logo
@@ -66,17 +57,10 @@ class JobCardWidget extends StatelessWidget {
                   Gap(12.w),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          item!.title,
-                          style: Styles.mediumTitle,
-                        ),
-                        Text(
-                          userPostedBy!.fullName,
-                          style: Styles.smallBody,
-                        ),
+                        Text(item!.title, style: Styles.mediumTitle),
+                        Text(userPostedBy!.fullName, style: Styles.smallBody),
                       ],
                     ),
                   ),
@@ -98,9 +82,9 @@ class JobCardWidget extends StatelessWidget {
               // Tags: Design, Full Time
               Row(
                 children: [
-                  BuildTagWidget(title:  item.jobType,),
+                  BuildTagWidget(title: item.jobType),
                   Gap(8.w),
-                  BuildTagWidget(title:  item.jobLevel),
+                  BuildTagWidget(title: item.jobLevel),
                 ],
               ),
               Gap(16.h),
@@ -158,9 +142,8 @@ class JobCardWidget extends StatelessWidget {
             ],
           ),
         ),
+        Gap(AppSpaces.smallH),
       ],
     );
   }
-
-
 }

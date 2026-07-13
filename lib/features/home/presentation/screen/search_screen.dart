@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:job_finder/core/utils/app_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/utils/app_colors.dart';
@@ -77,7 +79,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.kWhite,
       body: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: AppSpaces.largeW,
@@ -135,9 +136,17 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: ListView.builder(
                         itemCount: currentEntity.homeDataEntity.length,
                         itemBuilder: (context, index) {
-                          return JobCardWidget(
-                            homeEntity: currentEntity,
-                            index: index,
+                          return InkWell(
+                            onTap: () {
+                              GoRouter.of(context).push(
+                                AppRouter.kGetJobBySlugScreen,
+                                extra: currentEntity.homeDataEntity[index].slug,
+                              );
+                            },
+                            child: JobCardWidget(
+                              homeEntity: currentEntity,
+                              index: index,
+                            ),
                           );
                         },
                       ),

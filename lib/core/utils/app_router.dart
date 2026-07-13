@@ -8,7 +8,6 @@ import '../../features/auth/presentation/screen/login_screen.dart';
 import '../../features/auth/presentation/screen/register_screen.dart';
 import '../../features/home/presentation/bloc/home/home_jobs_bloc.dart';
 import '../../features/home/presentation/screen/get_job_by_slug_screen.dart';
-import '../../features/home/presentation/screen/home_screen.dart';
 import '../../features/home/presentation/screen/search_screen.dart';
 import '../../features/onboarding/presentation/screen/splash_screen.dart';
 import 'di.dart';
@@ -27,45 +26,39 @@ abstract class AppRouter {
     routes: <RouteBase>[
       GoRoute(
         path: kSplash,
-        builder:
-            (BuildContext context, GoRouterState state) {
-              return const SplashScreen();
-            },
+        builder: (BuildContext context, GoRouterState state) {
+          return const SplashScreen();
+        },
       ),
       GoRoute(
         path: kOnBoarding,
-        builder:
-            (BuildContext context, GoRouterState state) {
+        builder: (BuildContext context, GoRouterState state) {
           return OnBoardingScreen();
         },
       ),
       GoRoute(
         path: kRegister,
-        builder:
-            (BuildContext context, GoRouterState state) {
-              return const RegisterScreen();
-            },
+        builder: (BuildContext context, GoRouterState state) {
+          return const RegisterScreen();
+        },
       ),
       GoRoute(
         path: kLogin,
-        builder:
-            (BuildContext context, GoRouterState state) {
-              return const LoginScreen();
-            },
+        builder: (BuildContext context, GoRouterState state) {
+          return const LoginScreen();
+        },
       ),
       GoRoute(
         path: kRoot,
-        builder:
-            (BuildContext context, GoRouterState state) {
-              return  Root(userName:state.extra.toString() );
-            },
+        builder: (BuildContext context, GoRouterState state) {
+          return Root(userName: state.extra.toString());
+        },
       ),
       GoRoute(
         path: kGetJobBySlugScreen,
-        builder:
-            (BuildContext context, GoRouterState state) {
-              return  GetJobBySlugScreen(jobSlug: state.extra.toString());
-            },
+        builder: (BuildContext context, GoRouterState state) {
+          return GetJobBySlugScreen(jobSlug: state.extra.toString());
+        },
       ),
       GoRoute(
         path: kSearch, // مسار شاشة البحث الخاص بك
