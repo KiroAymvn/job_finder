@@ -18,15 +18,14 @@ class HomeRepoImpl extends HomeRepo {
     required ListAllJobsParams params,
   }) async {
     try {
-      final HomeEntity homeEntity =
-          await homeRemoteDataSource.getJobsData(
-            params: params,
-          );
+      final HomeEntity homeEntity = await homeRemoteDataSource.getJobsData(
+        params: params,
+      );
       return right(homeEntity);
     } on ServerException catch (e) {
-      return left(
-        Failure(errMessage: e.errorModel.errorMessage),
-      );
+      return left(Failure(errMessage: e.errorModel.errorMessage));
+    } catch (e) {
+      return left(Failure(errMessage: "Parsing Error: ${e.toString()}"));
     }
   }
 
@@ -35,13 +34,14 @@ class HomeRepoImpl extends HomeRepo {
     required String jobSlug,
   }) async {
     try {
-      final jobDetails = await homeRemoteDataSource
-          .getJobDetails(jobSlug: jobSlug);
+      final jobDetails = await homeRemoteDataSource.getJobDetails(
+        jobSlug: jobSlug,
+      );
       return right(jobDetails);
     } on ServerException catch (e) {
-      return left(
-        Failure(errMessage: e.errorModel.errorMessage),
-      );
+      return left(Failure(errMessage: e.errorModel.errorMessage));
+    } catch (e) {
+      return left(Failure(errMessage: "Parsing Error: ${e.toString()}"));
     }
   }
 
@@ -51,9 +51,9 @@ class HomeRepoImpl extends HomeRepo {
       final stats = await homeRemoteDataSource.getStats();
       return right(stats);
     } on ServerException catch (e) {
-      return left(
-        Failure(errMessage: e.errorModel.errorMessage),
-      );
+      return left(Failure(errMessage: e.errorModel.errorMessage));
+    } catch (e) {
+      return left(Failure(errMessage: "Parsing Error: ${e.toString()}"));
     }
   }
 }

@@ -9,7 +9,7 @@ class HomeDataEntity {
   final String location;
   final String salaryRange;
   final String slug;
-  final String? category;
+  //final String? category;
   final String createdAt;
   final String updatedAt;
   final bool isFavorite;
@@ -24,7 +24,7 @@ class HomeDataEntity {
     required this.location,
     required this.salaryRange,
     required this.slug,
-    required this.category,
+ //   required this.category,
     required this.createdAt,
     required this.updatedAt,
     required this.isFavorite,

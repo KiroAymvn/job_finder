@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:job_finder/core/utils/app_colors.dart';
@@ -8,15 +9,29 @@ import 'package:job_finder/core/utils/app_spaces.dart';
 import 'package:job_finder/features/home/presentation/screen/home_screen.dart';
 import 'package:job_finder/features/home/presentation/screen/search_screen.dart';
 
+import 'core/utils/di.dart';
+import 'features/home/presentation/bloc/home/home_jobs_bloc.dart';
+class SearchScreenProvider extends StatelessWidget {
+  const SearchScreenProvider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      // هنا السحر: GetIt سيقوم بإنشاء نسخة جديدة كلياً تبدأ بحالة Initial
+      create: (context) => sl<HomeJobsBloc>(),
+      child: const SearchScreen(),
+    );
+  }
+}
 class Root extends StatelessWidget {
   final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
 final String userName;
   Root({super.key, required this.userName});
 
   late final List<Widget> _screens = [
-    SearchScreen(),
-     HomeScreen(userName),
 
+     HomeScreen(userName),
+    SearchScreen(),
     const Center(child: Text("save Screen")),
     const Center(child: Text("Settings Screen")),
   ];

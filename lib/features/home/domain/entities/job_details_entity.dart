@@ -19,7 +19,7 @@ class JobDetailsEntity extends HomeDataEntity {
     required super.location,
     required super.salaryRange,
     required super.slug,
-    required super.category,
+ //   required super.category,
     required super.createdAt,
     required super.updatedAt,
     required super.isFavorite,

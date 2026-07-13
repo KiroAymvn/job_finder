@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:job_finder/core/database/api/dio_client.dart';
 import 'package:job_finder/core/database/api/dio_consumer.dart';
@@ -78,10 +77,12 @@ Future<void> setUp() async {
     ),
   );
 
-  sl.registerFactory<HomeJobsBloc>(
-    () => HomeJobsBloc(
-      homeJobsUseCase: sl<HomeJobsUseCase>(),
-    ),
+  sl.registerFactory<HomeScreenBloc>(
+    () => HomeScreenBloc(homeJobsUseCase: sl<HomeJobsUseCase>()),
+  );
+
+  sl.registerFactory<SearchScreenBloc>(
+    () => SearchScreenBloc(homeJobsUseCase: sl<HomeJobsUseCase>()),
   );
   sl.registerFactory<JobDetailsCubit>(
         () => JobDetailsCubit(

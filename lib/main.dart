@@ -1,19 +1,10 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // 1. Import flutter_bloc
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:job_finder/core/database/api/dio_client.dart';
-import 'package:job_finder/core/database/api/dio_consumer.dart';
 import 'package:job_finder/core/params/list_all_jobs.dart';
 import 'package:job_finder/core/utils/app_colors.dart';
 import 'package:job_finder/core/utils/app_router.dart';
-import 'package:job_finder/core/utils/secure_storage_helper.dart';
-import 'package:job_finder/features/auth/data/data_source/remote_data_source.dart';
-import 'package:job_finder/features/auth/data/repo/auth_repo_impl.dart';
-import 'package:job_finder/features/auth/domain/uses_cases/auth_use_case.dart';
-import 'package:job_finder/features/home/data/data_source/home_remote_data_source.dart';
-import 'package:job_finder/features/home/data/repo/home_repo_impl.dart';
-import 'package:job_finder/features/home/domain/uses_cases/home_jobs_use_case.dart';
 import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
 import 'package:job_finder/features/home/presentation/bloc/stats/stats_bloc.dart';
 
@@ -51,15 +42,12 @@ class MyApp extends StatelessWidget {
           providers: [
             BlocProvider<AuthCubit>(
               create: (context) => sl<AuthCubit>()),
-            BlocProvider<HomeJobsBloc>(
-              lazy: false,
-              // 👈 إضافة هذا السطر تجبر الـ Bloc على العمل فوراً
+            BlocProvider<HomeScreenBloc>(
               create: (context) =>
-                  sl<HomeJobsBloc>()..add(
-                    HomeJobsSearchEvent(
-                      params: ListAllJobsParams(),
-                    ),
-                  ),
+                  sl<HomeScreenBloc>()..add(HomeJobsSearchEvent(params: ListAllJobsParams())),
+            ),
+            BlocProvider<SearchScreenBloc>(
+              create: (context) => sl<SearchScreenBloc>(),
             ),
             BlocProvider<JobDetailsCubit>(create: (context) => sl<JobDetailsCubit>()),
             BlocProvider<StatsBloc>(

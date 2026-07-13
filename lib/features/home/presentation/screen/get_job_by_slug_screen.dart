@@ -53,7 +53,7 @@ class _GetJobBySlugScreenState extends State<GetJobBySlugScreen> {
       location: 'Loading Location...',
       salaryRange: '\$00,000 - \$00,000',
       slug: 'loading',
-      category: 'Loading',
+     // category: 'Loading',
       createdAt: '',
       updatedAt: 'Loading...',
       isFavorite: false,

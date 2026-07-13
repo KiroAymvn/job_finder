@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocBuilder<HomeJobsBloc, HomeJobsState>(
+        child: BlocBuilder<HomeScreenBloc, HomeJobsState>(
           builder: (context, state) {
             return SingleChildScrollView(
               padding: EdgeInsets.symmetric(
@@ -42,8 +42,7 @@ class HomeScreen extends StatelessWidget {
               child: Skeletonizer(
                 enabled: state is HomeJobsLoading,
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     HomeHeaderWidget(userName: userName),
                     Gap(AppSpaces.largeH),
@@ -57,39 +56,27 @@ class HomeScreen extends StatelessWidget {
                     const BrowseCategorySectionWidget(),
                     Gap(AppSpaces.largeH),
 
-                    Text(
-                      'All Jobs',
-                      style: Styles.mediumTitle,
-                    ),
+                    Text('All Jobs', style: Styles.mediumTitle),
                     Gap(16.h),
                     state is HomeJobsSuccess
                         ? ListView.builder(
                             shrinkWrap: true,
-                            physics:
-                                NeverScrollableScrollPhysics(),
-                            itemCount: state
-                                .homeEntity
-                                .homeDataEntity
-                                .length,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: state.homeEntity.homeDataEntity.length,
                             itemBuilder: (context, index) {
-                              final HomeEntity homeEntity =
-                                  state.homeEntity;
+                              final HomeEntity homeEntity = state.homeEntity;
                               return GestureDetector(
                                 onTap: () {
                                   GoRouter.of(context).push(
-                                    AppRouter
-                                        .kGetJobBySlugScreen,
-                                    extra: homeEntity!
-                                        .homeDataEntity[index]
-                                        .slug,
+                                    AppRouter.kGetJobBySlugScreen,
+                                    extra:
+                                        homeEntity!.homeDataEntity[index].slug,
                                   );
                                 },
-                                child:
-                                    JobCardWidget(
-                                      homeEntity:
-                                          homeEntity,
-                                      index: index,
-                                    ),
+                                child: JobCardWidget(
+                                  homeEntity: homeEntity,
+                                  index: index,
+                                ),
                               );
                             },
                           )
@@ -107,4 +94,3 @@ class HomeScreen extends StatelessWidget {
   }
 }
 // features/home/presentation/widgets/home_header_widget.dart
-

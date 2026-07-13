@@ -55,18 +55,13 @@ class _CustomModelBottomSheetFilterState
         vertical: AppSpaces.smallH,
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadiusGeometry.circular(
-          AppRadius.largeR,
-        ),
+        borderRadius: BorderRadiusGeometry.circular(AppRadius.largeR),
       ),
       child: ListView(
         children: [
           Align(
             alignment: AlignmentGeometry.center,
-            child: Text(
-              "Filter",
-              style: Styles.largeTitle.copyWith(),
-            ),
+            child: Text("Filter", style: Styles.largeTitle.copyWith()),
           ),
           Gap(AppSpaces.mediumH),
           Text("Location", style: Styles.mediumTitle),
@@ -100,25 +95,24 @@ class _CustomModelBottomSheetFilterState
               Expanded(
                 child: CustomButton(
                   onPressed: () {
-                    ListAllJobsParams
-                    params = ListAllJobsParams(
-                      jobType:
-                          ListAllJobsParams.convertJobTypeToModel(
-                            jobType: selectedJobType,
-                          ),
-                      jobLevel:
-                          ListAllJobsParams.convertJobLevelToModel(
-                            jobLevel: selectedJobLevel,
-                          ),
-                      location: finalLocation.contains("")?null:finalLocation,
-                      search:
-                          widget.searchController.text
-                              .contains("")
+                    ListAllJobsParams params = ListAllJobsParams(
+                      jobType: ListAllJobsParams.convertJobTypeToModel(
+                        jobType: selectedJobType,
+                      ),
+                      jobLevel: ListAllJobsParams.convertJobLevelToModel(
+                        jobLevel: selectedJobLevel,
+                      ),
+                      location: finalLocation.contains("")
+                          ? null
+                          : finalLocation,
+                      search: widget.searchController.text.contains("")
                           ? null
                           : widget.searchController.text,
                     );
                     print(params.toMap());
-                     context.read<HomeJobsBloc>().add(HomeJobsSearchEvent(params: params));
+                    context.read<SearchScreenBloc>().add(
+                      HomeJobsSearchEvent(params: params),
+                    );
                   },
                   text: "Apply",
                 ),

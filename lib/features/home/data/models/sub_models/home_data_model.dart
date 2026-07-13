@@ -12,7 +12,7 @@ class HomeDataModel extends HomeDataEntity {
     required super.location,
     required super.salaryRange,
     required super.slug,
-    required super.category,
+   // required super.category,
     required super.createdAt,
     required super.updatedAt,
     required super.isFavorite,
@@ -59,7 +59,7 @@ class HomeDataModel extends HomeDataEntity {
       location: map["location"] ?? '',
       salaryRange: map["salaryRange"] ?? '',
       slug: map["slug"] ?? '',
-      category: map["category"], // قد يكون null في الـ JSON المرفق لذا لا نعطيه قيمة افتراضية
+      //category: map["category"] ?? "", // قد يكون null في الـ JSON المرفق لذا لا نعطيه قيمة افتراضية
       createdAt: map["createdAt"] ?? '',
       updatedAt: map["updatedAt"] ?? '',
       isFavorite: map["isFavorite"] ?? false,
