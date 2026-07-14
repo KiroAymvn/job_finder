@@ -34,6 +34,7 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<HomeScreenBloc, HomeJobsState>(
           builder: (context, state) {
+            final userName=state is HomeJobsSuccess ? state.userName:"User";
             return SingleChildScrollView(
               padding: EdgeInsets.symmetric(
                 horizontal: AppSpaces.largeW,
@@ -44,7 +45,7 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    HomeHeaderWidget(userName: userName),
+                    HomeHeaderWidget(userName:userName ),
                     Gap(AppSpaces.largeH),
 
                     Image.asset(AppImages.cover),

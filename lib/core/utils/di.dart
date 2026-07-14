@@ -1,6 +1,9 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:job_finder/core/database/api/dio_client.dart';
 import 'package:job_finder/core/database/api/dio_consumer.dart';
+import 'package:job_finder/core/storage/secure_storage_helper.dart';
+import 'package:job_finder/core/storage/shared_pref.dart';
 import 'package:job_finder/features/auth/data/data_source/remote_data_source.dart';
 import 'package:job_finder/features/auth/data/repo/auth_repo_impl.dart';
 import 'package:job_finder/features/auth/domain/uses_cases/auth_use_case.dart';
@@ -12,6 +15,7 @@ import 'package:job_finder/features/home/domain/uses_cases/get_stats_use_case.da
 import 'package:job_finder/features/home/domain/uses_cases/home_jobs_use_case.dart';
 import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.dart';
 import 'package:job_finder/features/home/presentation/bloc/stats/stats_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/home/presentation/bloc/detailed_job/job_details_cubit.dart';
 
@@ -31,22 +35,20 @@ Future<void> setUp() async {
   );
 
   sl.registerLazySingleton<HomeRemoteDataSource>(
-    () => HomeRemoteDataSource(
-      dioConsumer: sl<DioConsumer>(),
-    ),
+    () => HomeRemoteDataSource(dioConsumer: sl<DioConsumer>()),
   );
 
   // ==================== 3. Repositories ====================
   sl.registerLazySingleton<AuthRepoImpl>(
     () => AuthRepoImpl(
       remoteDataSource: sl<AuthRemoteDataSource>(),
+      sharedPref: sl(),
+      secureStorageHelper: sl(),
     ),
   );
 
   sl.registerLazySingleton<HomeRepoImpl>(
-    () => HomeRepoImpl(
-      homeRemoteDataSource: sl<HomeRemoteDataSource>(),
-    ),
+    () => HomeRepoImpl(homeRemoteDataSource: sl<HomeRemoteDataSource>()),
   );
 
   // ==================== 4. Use Cases ====================
@@ -85,11 +87,25 @@ Future<void> setUp() async {
     () => SearchScreenBloc(homeJobsUseCase: sl<HomeJobsUseCase>()),
   );
   sl.registerFactory<JobDetailsCubit>(
-        () => JobDetailsCubit(
-      getJobDetailsUseCase: sl<GetJobDetailsUseCase>(),
-    ),
+    () => JobDetailsCubit(getJobDetailsUseCase: sl<GetJobDetailsUseCase>()),
   );
   sl.registerFactory<StatsBloc>(
     () => StatsBloc(getStatsUseCase: sl<GetStatsUseCase>()),
   );
+
+  //FLUTTER SECURE STORAGE
+  final storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
+
+  sl.registerLazySingleton(() => storage);
+
+  sl.registerLazySingleton(() => SecureStorageHelper(sl()));
+
+  //SHARED PREF
+  final prefs = await SharedPreferences.getInstance();
+
+  sl.registerLazySingleton(() => prefs);
+
+  sl.registerLazySingleton(() => SharedPref(sl()));
 }

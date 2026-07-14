@@ -7,7 +7,8 @@ final class HomeJobsInitial extends HomeJobsState {}
 final class HomeJobsLoading extends HomeJobsState {}
 final class HomeJobsSuccess extends HomeJobsState {
   final HomeEntity homeEntity;
-  HomeJobsSuccess({required this.homeEntity});
+  final String userName;
+  HomeJobsSuccess({required this.homeEntity, required this.userName});
 }
 final class HomeJobsFailed extends HomeJobsState {
   final String errorMessage;

@@ -1,6 +1,7 @@
 
 import 'package:dio/dio.dart';
-import 'package:job_finder/core/utils/secure_storage_helper.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:job_finder/core/storage/secure_storage_helper.dart';
 
 
 class DioClient {
@@ -21,8 +22,8 @@ class DioClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final storageHelper = await SecureStorageHelper.getInstance();
-          final String? token = await storageHelper?.getData(key: "token");
+          final storageHelper = await SecureStorageHelper(FlutterSecureStorage());
+          final String? token = await storageHelper?.read(key: "token");
           print(' API Request to: ${options.path}');
           print(' Token for request: ${token ?? 'null'}');
 

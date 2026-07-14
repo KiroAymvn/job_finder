@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // استخدمنا المكتبة هنا
 import 'package:go_router/go_router.dart';
+import 'package:job_finder/core/storage/app_cache_key.dart';
+import 'package:job_finder/core/storage/shared_pref.dart';
 import 'package:job_finder/core/utils/app_colors.dart';
+import 'package:job_finder/core/utils/app_router.dart';
 import 'package:job_finder/core/utils/images.dart';
 import 'package:job_finder/features/auth/presentation/screen/register_screen.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,7 +19,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Alignment _arrowAlignment = Alignment.centerLeft;
 
-
   Future<void> startApp() async {
     await Future.delayed(const Duration(milliseconds: 500));
 
@@ -25,16 +27,23 @@ class _SplashScreenState extends State<SplashScreen> {
         _arrowAlignment = Alignment.centerRight;
       });
     }
-
+    final pref = SharedPreferences.getInstance();
+    SharedPref sharedPref = SharedPref(await pref);
+    bool? isLogged = await sharedPref.getBool(key: AppCacheKey.isLogged);
 
     await Future.delayed(const Duration(milliseconds: 2500));
 
     if (mounted) {
-      GoRouter.of(context).pushReplacement("/OnBoarding");
+      if(isLogged??false){
+        GoRouter.of(context).pushReplacement(AppRouter.kRoot);
+
+      }else{
+        GoRouter.of(context).pushReplacement("/OnBoarding");
+
+      }
+
     }
   }
-
-
 
   @override
   void initState() {
@@ -50,22 +59,13 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Stack(
         children: [
           // الشعار في المنتصف
-          Center(
-            child: Image.asset(
-              AppImages.logoWhite,
-              width: 138.57.w,
-            ),
-          ),
+          Center(child: Image.asset(AppImages.logoWhite, width: 138.57.w)),
 
           AnimatedAlign(
             duration: const Duration(milliseconds: 1500),
             curve: Curves.easeOutBack,
             alignment: _arrowAlignment,
-            child: Image.asset(
-              AppImages.arrow,
-              width: 150.w,
-              height: 133.h,
-            ),
+            child: Image.asset(AppImages.arrow, width: 150.w, height: 133.h),
           ),
         ],
       ),
