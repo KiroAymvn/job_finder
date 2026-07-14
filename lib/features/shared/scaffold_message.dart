@@ -4,12 +4,12 @@ import 'package:job_finder/core/utils/app_colors.dart';
 
 import '../../core/utils/text_styles.dart';
 
-
-ScaffoldFeatureController<SnackBar, SnackBarClosedReason> scaffoldMessengerError(
-    BuildContext context,
-    String errorMessage,
-    {Color?color}
-    ) {
+ScaffoldFeatureController<SnackBar, SnackBarClosedReason>
+scaffoldMessengerError(
+  BuildContext context,
+  String errorMessage, {
+  Color? color,
+}) {
   return ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       shape: OutlineInputBorder(
@@ -21,8 +21,12 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> scaffoldMessengerError
       elevation: 10.h,
       behavior: SnackBarBehavior.floating,
       clipBehavior: Clip.none,
-      content: Text(errorMessage,style: Styles.mediumTitle.copyWith(color: AppColors.kWhite),textAlign: TextAlign.center,),
-      backgroundColor: color?? Colors.red,
+      content: Text(
+        errorMessage,
+        style: Styles.mediumTitle.copyWith(color: AppColors.kWhite),
+        textAlign: TextAlign.center,
+      ),
+      backgroundColor: color ?? Colors.red,
     ),
   );
 }

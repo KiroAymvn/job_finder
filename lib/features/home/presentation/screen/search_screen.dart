@@ -32,7 +32,6 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
 
-  // إنشاء بيانات وهمية للـ Skeletonizer ليقوم برسم هيكل التحميل بناءً عليها
   HomeEntity _getDummyHomeEntity() {
     return HomeEntity(
       isSuccess: true,
@@ -44,7 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
         hasPrevious: false,
       ),
       homeDataEntity: List.generate(
-        5, // عدد البطاقات الوهمية التي ستظهر وقت التحميل
+        5,
         (index) => HomeDataEntity(
           id: '0',
           title: 'Loading Job Title...',
@@ -72,7 +71,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
-    searchController.dispose(); // تنظيف الذاكرة
+    searchController.dispose();
     super.dispose();
   }
 
@@ -99,12 +98,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   }
                 },
                 builder: (context, state) {
-                  // أ. حالة البداية (قبل إجراء أي بحث أو فلترة)
                   if (state is HomeJobsInitial) {
                     return _initialSearchWidget();
                   }
 
-                  // ب. حالة الفشل في جلب البيانات
                   if (state is HomeJobsFailed) {
                     return Expanded(
                       child: Center(
@@ -118,18 +115,14 @@ class _SearchScreenState extends State<SearchScreen> {
                     );
                   }
 
-                  // ج. تحديد حالة التحميل واختيار البيانات
                   final bool isLoading = state is HomeJobsLoading;
                   final HomeEntity currentEntity = state is HomeJobsSuccess
                       ? state.homeEntity
                       : _getDummyHomeEntity();
 
-                  // د. حالة النجاح ولكن لا توجد نتائج مطابقة للفلتر
                   if (!isLoading && currentEntity.homeDataEntity.isEmpty) {
                     return _noResultFoundWidget();
                   }
-
-                  // هـ. حالة التحميل، أو النجاح بوجود نتائج فعلية
                   return Expanded(
                     child: Skeletonizer(
                       enabled: isLoading,
@@ -161,7 +154,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // المكون الخاص برسالة البدء
   Expanded _initialSearchWidget() {
     return Expanded(
       child: Column(
@@ -186,7 +178,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // المكون الخاص برسالة عدم وجود نتائج
   Expanded _noResultFoundWidget() {
     return Expanded(
       child: Column(

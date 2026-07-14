@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,30 +8,23 @@ import '../../../../../core/utils/text_styles.dart';
 import '../../../../auth/presentation/widget/custom_text_field.dart';
 
 class LocationDropdownWidget extends StatefulWidget {
-  const LocationDropdownWidget({
-    super.key,
-    required this.onLocationChanged,
-  });
+  const LocationDropdownWidget({super.key, required this.onLocationChanged});
 
   // هذه الدالة ترسل المدينة المختارة (سواء من القائمة أو المكتوبة يدوياً) إلى الشاشة الأب
   final Function(String) onLocationChanged;
 
   @override
-  State<LocationDropdownWidget> createState() =>
-      _LocationDropdownWidgetState();
+  State<LocationDropdownWidget> createState() => _LocationDropdownWidgetState();
 }
 
-class _LocationDropdownWidgetState
-    extends State<LocationDropdownWidget> {
+class _LocationDropdownWidgetState extends State<LocationDropdownWidget> {
   String? selectedCity;
 
   // متحكم للبحث داخل القائمة المنسدلة
-  final TextEditingController _searchController =
-  TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   // متحكم لحقل النص اليدوي (عند اختيار Other)
-  final TextEditingController _customCityController =
-  TextEditingController();
+  final TextEditingController _customCityController = TextEditingController();
 
   // 1. قائمة المدن المصرية + خيار Other
   final List<String> egyptCities = [
@@ -67,9 +59,7 @@ class _LocationDropdownWidgetState
     // مراقبة ما يكتبه المستخدم في حقل "Other" لكي نرسله للشاشة الأب
     _customCityController.addListener(() {
       if (selectedCity == 'Other') {
-        widget.onLocationChanged(
-          _customCityController.text,
-        );
+        widget.onLocationChanged(_customCityController.text);
       }
     });
   }
@@ -101,9 +91,7 @@ class _LocationDropdownWidgetState
               // التعديل السحري لضبط الارتفاع والشكل (Matching App Identity)
               inputDecorationTheme: InputDecorationTheme(
                 // ضبط الارتفاع ليكون 48.h بالضبط
-                constraints: BoxConstraints(
-                  maxHeight: 48.h,
-                ),
+                constraints: BoxConstraints(maxHeight: 48.h),
                 // جعل Padding العمودي 0 حتى يتمركز النص والأيقونة في المنتصف تماماً
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 16.w,
@@ -141,15 +129,16 @@ class _LocationDropdownWidgetState
                   selectedCity = value;
                 });
 
-                // إذا اختار مدينة من القائمة (وليست Other)، أرسلها مباشرة
-                if (value != null && value != 'Other') {
+                if (value == null) {
+                  widget.onLocationChanged("");
+                } else if (value == 'Other') {
+                  widget.onLocationChanged(_customCityController.text);
+                } else {
                   widget.onLocationChanged(value);
-                  _customCityController
-                      .clear(); // تنظيف الحقل المخصص
+                  _customCityController.clear();
                 }
               },
 
-              // بناء العناصر
               dropdownMenuEntries: egyptCities.map((city) {
                 return DropdownMenuEntry<String>(
                   value: city,
@@ -164,10 +153,8 @@ class _LocationDropdownWidgetState
           },
         ),
 
-        // 4. إظهار حقل إضافي إذا اختار المستخدم "Other"
         if (selectedCity == 'Other') ...[
           Gap(16.h),
-          // استخدام حقل النص المخصص الخاص بك
           CustomTextField(
             label: "Enter your specific city",
             controller: _customCityController,

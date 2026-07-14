@@ -9,6 +9,7 @@ import 'package:job_finder/features/home/presentation/bloc/home/home_jobs_bloc.d
 import 'package:job_finder/features/home/presentation/widget/filter%20model%20sheet/search_widget.dart';
 import 'package:job_finder/features/shared/build_tag_widget.dart';
 import 'package:job_finder/features/shared/custom_button.dart';
+import 'package:job_finder/features/shared/scaffold_message.dart';
 
 import '../../../../../core/utils/app_radius.dart';
 import '../../../../../core/utils/app_spaces.dart';
@@ -40,15 +41,21 @@ final List<String> jobTypeList = [
   "Contract",
   "Internship",
 ];
-String selectedJobLevel = jobLevelsList[0];
-String selectedJobType = jobTypeList[0];
+String selectedJobLevel = "";
+String selectedJobType = "";
 
 class _CustomModelBottomSheetFilterState
     extends State<CustomModelBottomSheetFilter> {
   @override
   Widget build(BuildContext context) {
+    ListAllJobsParams params = ListAllJobsParams.fromFilter(
+      jobType: selectedJobType,
+      jobLevel: selectedJobLevel,
+      location: finalLocation,
+      search: widget.searchController.text,
+    );
     return Container(
-      height: 530.h,
+      height: 500.h,
       width: double.maxFinite,
       padding: EdgeInsetsGeometry.symmetric(
         horizontal: AppSpaces.smallW,
@@ -57,7 +64,10 @@ class _CustomModelBottomSheetFilterState
       decoration: BoxDecoration(
         borderRadius: BorderRadiusGeometry.circular(AppRadius.largeR),
       ),
-      child: ListView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Align(
             alignment: AlignmentGeometry.center,
@@ -68,7 +78,9 @@ class _CustomModelBottomSheetFilterState
           Gap(AppSpaces.smallH),
           LocationDropdownWidget(
             onLocationChanged: (selectedOrTypedCity) {
-              finalLocation = selectedOrTypedCity;
+              setState(() {
+                finalLocation = selectedOrTypedCity;
+              });
               print("User location is now: $finalLocation");
             },
           ),
@@ -87,32 +99,21 @@ class _CustomModelBottomSheetFilterState
                     Navigator.pop(context);
                   },
                   text: "Close",
-                  textColor: AppColors.kGrey,
-                  buttonColor: AppColors.kGreyDE,
+                  textColor: AppColors.kRed,
+                  buttonColor: AppColors.kPrimary.withOpacity(0.3),
                 ),
               ),
               Gap(AppSpaces.smallW),
               Expanded(
                 child: CustomButton(
+                  isDisable: params.isInstanceNull(),
                   onPressed: () {
-                    ListAllJobsParams params = ListAllJobsParams(
-                      jobType: ListAllJobsParams.convertJobTypeToModel(
-                        jobType: selectedJobType,
-                      ),
-                      jobLevel: ListAllJobsParams.convertJobLevelToModel(
-                        jobLevel: selectedJobLevel,
-                      ),
-                      location: finalLocation.contains("")
-                          ? null
-                          : finalLocation,
-                      search: widget.searchController.text.contains("")
-                          ? null
-                          : widget.searchController.text,
-                    );
-                    print(params.toMap());
-                    context.read<SearchScreenBloc>().add(
-                      HomeJobsSearchEvent(params: params),
-                    );
+                    if (params.isInstanceNull() == false) {
+                      context.read<SearchScreenBloc>().add(
+                        HomeJobsSearchEvent(params: params),
+                      );
+                      Navigator.pop(context);
+                    }
                   },
                   text: "Apply",
                 ),
@@ -139,7 +140,11 @@ class _CustomModelBottomSheetFilterState
                 (type) => InkWell(
                   onTap: () {
                     setState(() {
-                      selectedJobType = type;
+                      if (selectedJobType == type) {
+                        selectedJobType = '';
+                      } else {
+                        selectedJobType = type;
+                      }
                     });
                   },
                   child: BuildTagWidget(
@@ -168,7 +173,11 @@ class _CustomModelBottomSheetFilterState
                 (level) => InkWell(
                   onTap: () {
                     setState(() {
-                      selectedJobLevel = level;
+                      if (selectedJobLevel == level) {
+                        selectedJobLevel = '';
+                      } else {
+                        selectedJobLevel = level;
+                      }
                     });
                   },
                   child: BuildTagWidget(

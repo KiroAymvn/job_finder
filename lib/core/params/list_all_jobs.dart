@@ -34,6 +34,34 @@ class ListAllJobsParams {
     this.location,
     this.search,
   });
+
+  bool isInstanceNull() {
+    return page == null &&
+        limit == null &&
+        jobType == null &&
+        jobLevel == null &&
+        location == null;
+  }
+
+  factory ListAllJobsParams.fromFilter({
+    String? jobType,
+    String? jobLevel,
+    String? location,
+    String? search,
+  }) {
+    return ListAllJobsParams(
+      jobType: jobType != null ? convertJobTypeToModel(jobType: jobType) : null,
+      jobLevel: jobLevel != null
+          ? convertJobLevelToModel(jobLevel: jobLevel)
+          : null,
+      location:
+          (location != null && location.trim().isNotEmpty && location != "")
+          ? location
+          : null,
+      search: (search != null && search.trim().isNotEmpty) ? search : null,
+    );
+  }
+
   static JobType? convertJobTypeToModel({required String jobType}) {
     final normalizedString = jobType.toLowerCase();
     if (normalizedString.contains("full")) {

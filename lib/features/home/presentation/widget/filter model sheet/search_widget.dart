@@ -21,12 +21,9 @@ class SearchBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50.h,
-      // أو 0.1.sh حسب ما تفضله، هذا سيتحكم في ارتفاع الحقل والزر معاً
       child: Row(
-        // stretch: تجبر جميع العناصر على التمدد لملء الارتفاع المتاح (56.h)
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 1. حقل البحث
           Expanded(
             child: CustomTextField(
               label: "Search",
@@ -36,11 +33,11 @@ class SearchBarWidget extends StatelessWidget {
           ),
           Gap(AppSpaces.smallW),
 
-          // 2. زر الفلتر
           InkWell(
             onTap: () {
               showModalBottomSheet(
                 context: context,
+                isScrollControlled: true,
                 builder: (context) => CustomModelBottomSheetFilter(
                   searchController: searchController,
                 ),
